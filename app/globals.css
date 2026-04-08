@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0a0a0f;
+  --bg-2: #111118;
+  --bg-3: #1a1a24;
+  --surface: #16161f;
+  --surface-2: #1e1e2a;
+  --border: rgba(255,255,255,0.07);
+  --border-2: rgba(255,255,255,0.12);
+  --text: #f0f0f8;
+  --text-2: #9090a8;
+  --text-3: #5a5a78;
+  --accent: #6c63ff;
+  --accent-2: #a78bfa;
+  --accent-glow: rgba(108,99,255,0.3);
+  --green: #22c55e;
+  --orange: #f97316;
+  --red: #ef4444;
+}
+
+[data-theme="light"] {
+  --bg: #f8f8fc;
+  --bg-2: #f0f0f8;
+  --bg-3: #e8e8f4;
+  --surface: #ffffff;
+  --surface-2: #f4f4fc;
+  --border: rgba(0,0,0,0.08);
+  --border-2: rgba(0,0,0,0.14);
+  --text: #0a0a1a;
+  --text-2: #4a4a6a;
+  --text-3: #8a8aaa;
+  --accent: #5b52e8;
+  --accent-2: #7c6cf0;
+  --accent-glow: rgba(91,82,232,0.2);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', 'DM Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+[dir="rtl"] { font-family: 'Cairo', 'Tajawal', system-ui, sans-serif; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-2); }
+::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 3px; }
+
+.glass {
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.glow { box-shadow: 0 0 40px var(--accent-glow); }
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.tool-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition: all 0.25s ease;
+}
+
+.tool-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 30px var(--accent-glow);
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px var(--accent-glow);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border-2);
+  color: var(--text-2);
+  transition: all 0.2s;
+}
+
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.dropzone {
+  border: 2px dashed var(--border-2);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.dropzone:hover, .dropzone.active {
+  border-color: var(--accent);
+  background: rgba(108,99,255,0.05);
+}
+
+.progress-bar {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-fade-up { animation: fadeUp 0.5s ease forwards; }
+.animate-spin-custom { animation: spin 1.5s linear infinite; }

@@ -2,7 +2,7 @@
   "nav": {
     "tools": "Tools",
     "aiTools": "AI Tools",
-    "apiDocs": "API Docs",
+    "about": "About",
     "compress": "Compress Image",
     "convert": "Convert Image",
     "resize": "Resize Image",
@@ -12,9 +12,9 @@
     "badge": "Free Online Tools",
     "title": "Powerful Tools,",
     "titleHighlight": "Zero Friction",
-    "subtitle": "Compress, convert, resize images and generate QR codes — all free, all instant, all private.",
+    "subtitle": "Free online tools for images, QR codes, and text. Image tools run in your browser, and text is generated through our provider only when you request it.",
     "cta": "Explore Tools",
-    "ctaSecondary": "View API Docs"
+    "ctaSecondary": "Learn More"
   },
   "tools": {
     "title": "All Tools",
@@ -36,8 +36,8 @@
       "desc": "Create QR codes for any URL or text"
     },
     "aiEnhancer": {
-      "name": "AI Image Enhancer",
-      "desc": "Enhance and upscale with AI"
+      "name": "Image Enhancer",
+      "desc": "Upscale and sharpen images in your browser"
     },
     "aiText": {
       "name": "AI Text Generator",
@@ -147,18 +147,23 @@
     ]
   },
   "ai": {
-    "title": "AI-Powered Tools",
-    "subtitle": "Supercharge your workflow with artificial intelligence.",
+    "title": "Text & Image Tools",
+    "subtitle": "Browser-based image enhancement plus AI text generation when you need it.",
+    "badges": {
+      "local": "Browser-based",
+      "text": "AI text"
+    },
     "enhancer": {
-      "title": "AI Image Enhancer",
-      "desc": "Enhance, sharpen, and upscale images using AI algorithms.",
+      "title": "Image Enhancer",
+      "desc": "Upscale and sharpen images directly in your browser.",
       "button": "Enhance Image",
-      "processing": "AI is enhancing your image...",
-      "done": "Enhancement complete!"
+      "processing": "Enhancing your image...",
+      "done": "Enhancement complete!",
+      "resultNote": "Upscaled 1.5x with browser-based sharpening."
     },
     "textGen": {
       "title": "AI Text Generator",
-      "desc": "Generate high-quality text content with AI.",
+      "desc": "Generate short drafts with AI when you need writing help.",
       "label": "What do you want to write?",
       "placeholder": "Write a product description for a blue wireless headphone...",
       "tone": "Tone",
@@ -168,28 +173,44 @@
       "result": "Generated Text"
     }
   },
-  "apiDocs": {
-    "title": "API Documentation",
-    "subtitle": "Integrate our tools into your applications with a simple REST API.",
-    "getKey": "Get API Key",
-    "endpoints": "Endpoints",
-    "authentication": "Authentication",
-    "authDesc": "Pass your API key in the Authorization header: Authorization: Bearer YOUR_API_KEY",
-    "rateLimit": "Rate Limits",
-    "rateLimitDesc": "Free tier: 100 requests/day. Pro tier: 10,000 requests/day."
-  },
   "footer": {
-    "tagline": "Fast, free, private tools for everyone.",
+    "tagline": "Simple free tools for everyday tasks.",
     "tools": "Tools",
     "company": "Company",
     "about": "About",
     "privacy": "Privacy Policy",
+    "terms": "Terms of Use",
     "contact": "Contact",
-    "affiliate": "Affiliate",
-    "support": "Support Us",
-    "buyCoffee": "Buy Me a Coffee ☕",
+    "dataNote": "Image tools stay in your browser. Text requests are sent only when you use the AI text feature.",
+    "fundingNote": "Toolzee is designed to stay free through clearly labeled ads when enabled.",
     "rights": "All rights reserved.",
     "madeWith": "Made with ❤️"
+  },
+  "supportNote": {
+    "title": "Free tools, supported by ads",
+    "body": "Toolzee is built to keep its core tools free through clearly labeled ads. Image tools run in your browser, while text requests are sent to our provider only when you use the AI text feature."
+  },
+  "ads": {
+    "manage": "Privacy settings",
+    "eyebrow": "Privacy controls",
+    "title": "Choose ad and measurement settings",
+    "body": "Toolzee can load Google ad and analytics tags only after you choose a privacy setting for this device. Pick personalized ads, non-personalized ads, or keep ads and measurement off.",
+    "current": "Current choice",
+    "personalized": "Personalized ads",
+    "personalizedHint": "Allows ad and analytics tags with personalized advertising.",
+    "nonPersonalized": "Non-personalized ads",
+    "nonPersonalizedHint": "Allows analytics and less personalized advertising when available.",
+    "disabled": "No ads or measurement",
+    "disabledHint": "Keeps Google ad and analytics tags off on this device.",
+    "changeAnytime": "You can change this later from the footer.",
+    "close": "Close privacy settings",
+    "error": "We couldn't load Google AdSense right now. Ads will stay off until the script loads successfully.",
+    "status": {
+      "unset": "Not selected yet",
+      "personalized": "Personalized ads",
+      "non-personalized": "Non-personalized ads",
+      "disabled": "No ads or measurement"
+    }
   },
   "common": {
     "free": "Free",

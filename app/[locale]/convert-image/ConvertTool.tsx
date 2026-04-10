@@ -1,8 +1,11 @@
 'use client';
 
+import NextImage from 'next/image';
 import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import DropZone from '@/components/tools/DropZone';
+import SupportNote from '@/components/content/SupportNote';
+import { trackAnalyticsEvent } from '@/lib/analytics';
 import JSZip from 'jszip';
 
 type Format = 'image/jpeg' | 'image/png' | 'image/webp';
@@ -22,6 +25,7 @@ interface ConvertedFile {
 export default function ConvertTool() {
   const t = useTranslations('convert');
   const tc = useTranslations('common');
+  const note = useTranslations('supportNote');
   const [files, setFiles] = useState<ConvertedFile[]>([]);
   const [format, setFormat] = useState<typeof FORMATS[0]>(FORMATS[0]);
   const [processing, setProcessing] = useState(false);
@@ -32,6 +36,7 @@ export default function ConvertTool() {
       preview: URL.createObjectURL(f),
       status: 'pending' as const,
     }))]);
+    trackAnalyticsEvent('upload_images', { tool: 'convert', file_count: accepted.length });
   }, []);
 
   const convertImage = (file: File, fmt: Format): Promise<Blob> =>
@@ -49,6 +54,7 @@ export default function ConvertTool() {
 
   const handleConvert = async () => {
     setProcessing(true);
+    trackAnalyticsEvent('convert_start', { file_count: files.length, output_format: format.ext });
     const updated = [...files];
     for (let i = 0; i < updated.length; i++) {
       updated[i] = { ...updated[i], status: 'processing' };
@@ -61,11 +67,17 @@ export default function ConvertTool() {
       }
       setFiles([...updated]);
     }
+    trackAnalyticsEvent('convert_complete', {
+      file_count: updated.filter(file => file.status === 'done').length,
+      error_count: updated.filter(file => file.status === 'error').length,
+      output_format: format.ext,
+    });
     setProcessing(false);
   };
 
   const download = (cf: ConvertedFile) => {
     if (!cf.converted) return;
+    trackAnalyticsEvent('download_result', { tool: 'convert', file_type: format.ext });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(cf.converted);
     a.download = `${cf.original.name.replace(/\.[^.]+$/, '')}.${format.ext}`;
@@ -73,6 +85,7 @@ export default function ConvertTool() {
   };
 
   const downloadAll = async () => {
+    trackAnalyticsEvent('download_zip', { tool: 'convert', file_count: files.filter(file => file.converted).length });
     const zip = new JSZip();
     files.filter(f => f.converted).forEach(f => {
       zip.file(`${f.original.name.replace(/\.[^.]+$/, '')}.${format.ext}`, f.converted!);
@@ -82,16 +95,12 @@ export default function ConvertTool() {
     a.href = URL.createObjectURL(blob); a.download = 'converted.zip'; a.click();
   };
 
-  const faqs = [
-    { q: 'What formats are supported?', a: 'JPG, PNG, and WebP are supported for both input and output.' },
-    { q: 'Does converting affect quality?', a: 'PNG conversion is lossless. Converting to JPG applies light compression for smaller files.' },
-    { q: 'Is my data private?', a: 'All conversion happens in your browser. No server uploads.' },
-  ];
+  const faqs = t.raw('faq') as { q: string; a: string }[];
 
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '48px 24px' }}>
       <div style={{ textAlign: 'center', marginBottom: 40 }}>
-        <h1 style={{ fontSize: 'clamp(26px,4vw,40px)', fontWeight: 800, marginBottom: 12, fontFamily: 'Syne, sans-serif' }}>{t('title')}</h1>
+        <h1 style={{ fontSize: 'clamp(26px,4vw,40px)', fontWeight: 800, marginBottom: 12, fontFamily: 'var(--font-heading)' }}>{t('title')}</h1>
         <p style={{ color: 'var(--text-2)', fontSize: 16 }}>{t('subtitle')}</p>
       </div>
 
@@ -137,7 +146,7 @@ export default function ConvertTool() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {files.map((cf, i) => (
               <div key={i} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: 14, display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-                <img src={cf.preview} alt="" style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8 }} />
+                <NextImage src={cf.preview} alt="" width={56} height={56} unoptimized style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8 }} />
                 <div style={{ flex: 1 }}>
                   <p style={{ fontWeight: 600, fontSize: 14, marginBottom: 2 }}>{cf.original.name}</p>
                   <p style={{ fontSize: 12, color: 'var(--text-3)' }}>
@@ -156,16 +165,14 @@ export default function ConvertTool() {
         </div>
       )}
 
-      <div style={{ margin: '40px 0', padding: 20, borderRadius: 12, border: '1px dashed var(--border-2)', textAlign: 'center', color: 'var(--text-3)', fontSize: 13 }}>
-        📢 Advertisement – Google AdSense
-      </div>
+      <SupportNote title={note('title')} body={note('body')} />
 
       <section>
-        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, fontFamily: 'Syne, sans-serif' }}>{t('howTitle')}</h2>
+        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, fontFamily: 'var(--font-heading)' }}>{t('howTitle')}</h2>
         <p style={{ color: 'var(--text-2)', fontSize: 15, lineHeight: 1.8 }}>{t('howDesc')}</p>
       </section>
       <section style={{ marginTop: 40 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 20, fontFamily: 'Syne, sans-serif' }}>{t('faqTitle')}</h2>
+        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 20, fontFamily: 'var(--font-heading)' }}>{t('faqTitle')}</h2>
         <FAQs faqs={faqs} />
       </section>
     </div>

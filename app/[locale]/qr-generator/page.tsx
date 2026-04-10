@@ -1,14 +1,64 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
+import JsonLd from '@/components/seo/JsonLd';
 import QRTool from './QRTool';
+import { buildLocalizedMetadata } from '@/lib/metadata';
+import { buildBreadcrumbSchema, buildFaqSchema, buildToolSchema } from '@/lib/structured-data';
 
-export async function generateMetadata(): Promise<Metadata> {
-  return {
+const pageContent = {
+  en: {
     title: 'QR Code Generator Free – Create QR Codes Instantly',
-    description: 'Free online QR code generator. Create QR codes for URLs, text, contact info. Download as PNG. No signup required.',
+    description: 'Free QR code generator that runs in your browser. Create QR codes for URLs or text and download them instantly.',
     keywords: ['generate qr code free', 'qr code generator', 'free qr code maker', 'create qr code online'],
-  };
+  },
+  ar: {
+    title: 'مولد QR مجاني – أنشئ رموز QR فوراً',
+    description: 'مولد QR مجاني يعمل داخل المتصفح. أنشئ رموز QR للروابط أو النصوص وقم بتنزيلها مباشرة.',
+    keywords: ['مولد qr', 'انشاء qr', 'رمز qr مجاني', 'qr code arabic'],
+  },
+} as const;
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const page = pageContent[locale === 'ar' ? 'ar' : 'en'];
+
+  return buildLocalizedMetadata({
+    locale: locale === 'ar' ? 'ar' : 'en',
+    path: 'qr-generator',
+    title: page.title,
+    description: page.description,
+    keywords: [...page.keywords],
+  });
 }
 
-export default function QRPage() {
-  return <QRTool />;
+export default async function QRPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const normalizedLocale = locale === 'ar' ? 'ar' : 'en';
+  const page = pageContent[normalizedLocale];
+  const t = await getTranslations({ locale: normalizedLocale, namespace: 'qr' });
+  const faqs = t.raw('faq') as { q: string; a: string }[];
+
+  return (
+    <>
+      <JsonLd
+        id="qr-tool-schema"
+        data={buildToolSchema({
+          locale: normalizedLocale,
+          path: 'qr-generator',
+          name: t('title'),
+          description: page.description,
+          applicationCategory: 'UtilitiesApplication',
+        })}
+      />
+      <JsonLd id="qr-faq-schema" data={buildFaqSchema(normalizedLocale, faqs)} />
+      <JsonLd
+        id="qr-breadcrumb-schema"
+        data={buildBreadcrumbSchema(normalizedLocale, [
+          { name: normalizedLocale === 'ar' ? 'الرئيسية' : 'Home', path: '' },
+          { name: t('title'), path: 'qr-generator' },
+        ])}
+      />
+      <QRTool />
+    </>
+  );
 }

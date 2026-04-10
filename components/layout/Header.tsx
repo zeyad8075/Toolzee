@@ -40,8 +40,8 @@ export default function Header({ locale, theme, onToggleTheme }: HeaderProps) {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 16, fontWeight: 800, color: 'white'
             }}>T</div>
-            <span style={{ fontWeight: 800, fontSize: 18, color: 'var(--text)', fontFamily: 'Syne, sans-serif' }}>
-              ToolForge
+            <span style={{ fontWeight: 800, fontSize: 18, color: 'var(--text)', fontFamily: 'var(--font-heading)' }}>
+              Toolzee
             </span>
           </Link>
 
@@ -94,7 +94,7 @@ export default function Header({ locale, theme, onToggleTheme }: HeaderProps) {
             </div>
 
             <NavLink href={`/${locale}/ai-tools`}>{t('nav.aiTools')}</NavLink>
-            <NavLink href={`/${locale}/api-docs`}>{t('nav.apiDocs')}</NavLink>
+            <NavLink href={`/${locale}/about`}>{t('nav.about')}</NavLink>
           </nav>
 
           {/* Right side controls */}
@@ -154,9 +154,9 @@ export default function Header({ locale, theme, onToggleTheme }: HeaderProps) {
               style={{ display: 'block', padding: '12px 4px', textDecoration: 'none', color: 'var(--text-2)', fontSize: 15 }}>
               🤖 {t('nav.aiTools')}
             </Link>
-            <Link href={`/${locale}/api-docs`} onClick={() => setMenuOpen(false)}
+            <Link href={`/${locale}/about`} onClick={() => setMenuOpen(false)}
               style={{ display: 'block', padding: '12px 4px', textDecoration: 'none', color: 'var(--text-2)', fontSize: 15 }}>
-              📄 {t('nav.apiDocs')}
+              ℹ️ {t('nav.about')}
             </Link>
           </div>
         )}

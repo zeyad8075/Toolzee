@@ -1,15 +1,64 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
+import JsonLd from '@/components/seo/JsonLd';
 import CompressTool from './CompressTool';
+import { buildLocalizedMetadata } from '@/lib/metadata';
+import { buildBreadcrumbSchema, buildFaqSchema, buildToolSchema } from '@/lib/structured-data';
 
-export async function generateMetadata(): Promise<Metadata> {
-  return {
+const pageContent = {
+  en: {
     title: 'Compress Image Online Free – Reduce File Size Without Losing Quality',
-    description: 'Free online image compressor. Reduce JPG, PNG, WebP file size without losing quality. No upload, works in your browser.',
+    description: 'Free browser-based image compressor. Reduce JPG, PNG, WebP, and GIF file size without uploading your image.',
     keywords: ['compress image online free', 'reduce image size without losing quality', 'compress image to 100kb', 'image compressor'],
-    openGraph: { title: 'Image Compressor – ToolForge', description: 'Compress images instantly in your browser. Free, fast, private.' },
-  };
+  },
+  ar: {
+    title: 'ضغط الصور مجاناً عبر الإنترنت – تقليل حجم الصورة بدون فقدان ملحوظ للجودة',
+    description: 'أداة مجانية لضغط الصور داخل المتصفح. قلّل حجم JPG وPNG وWebP وGIF بدون رفع ملفاتك.',
+    keywords: ['ضغط الصور اونلاين', 'تقليل حجم الصورة', 'ضغط jpg', 'ضغط png'],
+  },
+} as const;
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const page = pageContent[locale === 'ar' ? 'ar' : 'en'];
+
+  return buildLocalizedMetadata({
+    locale: locale === 'ar' ? 'ar' : 'en',
+    path: 'compress-image',
+    title: page.title,
+    description: page.description,
+    keywords: [...page.keywords],
+  });
 }
 
-export default function CompressPage() {
-  return <CompressTool />;
+export default async function CompressPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const normalizedLocale = locale === 'ar' ? 'ar' : 'en';
+  const page = pageContent[normalizedLocale];
+  const t = await getTranslations({ locale: normalizedLocale, namespace: 'compress' });
+  const faqs = t.raw('faq') as { q: string; a: string }[];
+
+  return (
+    <>
+      <JsonLd
+        id="compress-tool-schema"
+        data={buildToolSchema({
+          locale: normalizedLocale,
+          path: 'compress-image',
+          name: t('title'),
+          description: page.description,
+          applicationCategory: 'UtilitiesApplication',
+        })}
+      />
+      <JsonLd id="compress-faq-schema" data={buildFaqSchema(normalizedLocale, faqs)} />
+      <JsonLd
+        id="compress-breadcrumb-schema"
+        data={buildBreadcrumbSchema(normalizedLocale, [
+          { name: normalizedLocale === 'ar' ? 'الرئيسية' : 'Home', path: '' },
+          { name: t('title'), path: 'compress-image' },
+        ])}
+      />
+      <CompressTool />
+    </>
+  );
 }

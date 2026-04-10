@@ -1,8 +1,11 @@
 'use client';
 
+import NextImage from 'next/image';
 import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import DropZone from '@/components/tools/DropZone';
+import SupportNote from '@/components/content/SupportNote';
+import { trackAnalyticsEvent } from '@/lib/analytics';
 import JSZip from 'jszip';
 
 interface ResizeFile {
@@ -16,6 +19,7 @@ interface ResizeFile {
 export default function ResizeTool() {
   const t = useTranslations('resize');
   const tc = useTranslations('common');
+  const note = useTranslations('supportNote');
   const [files, setFiles] = useState<ResizeFile[]>([]);
   const [width, setWidth] = useState('');
   const [height, setHeight] = useState('');
@@ -25,6 +29,7 @@ export default function ResizeTool() {
   const [processing, setProcessing] = useState(false);
 
   const handleFiles = useCallback((accepted: File[]) => {
+    trackAnalyticsEvent('upload_images', { tool: 'resize', file_count: accepted.length });
     accepted.forEach(f => {
       const img = new Image();
       img.onload = () => {
@@ -75,6 +80,13 @@ export default function ResizeTool() {
 
   const handleResize = async () => {
     setProcessing(true);
+    trackAnalyticsEvent('resize_start', {
+      file_count: files.length,
+      mode: byPercent ? 'percentage' : 'dimensions',
+      percent: byPercent ? Number(percent) : undefined,
+      width: byPercent ? undefined : Number(width),
+      height: byPercent ? undefined : Number(height),
+    });
     const updated = [...files];
     for (let i = 0; i < updated.length; i++) {
       updated[i] = { ...updated[i], status: 'processing' };
@@ -93,11 +105,17 @@ export default function ResizeTool() {
       }
       setFiles([...updated]);
     }
+    trackAnalyticsEvent('resize_complete', {
+      file_count: updated.filter(file => file.status === 'done').length,
+      error_count: updated.filter(file => file.status === 'error').length,
+      mode: byPercent ? 'percentage' : 'dimensions',
+    });
     setProcessing(false);
   };
 
   const download = (rf: ResizeFile) => {
     if (!rf.resized) return;
+    trackAnalyticsEvent('download_result', { tool: 'resize', file_type: 'png' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(rf.resized);
     a.download = `resized_${rf.original.name}`;
@@ -105,22 +123,19 @@ export default function ResizeTool() {
   };
 
   const downloadAll = async () => {
+    trackAnalyticsEvent('download_zip', { tool: 'resize', file_count: files.filter(file => file.resized).length });
     const zip = new JSZip();
     files.filter(f => f.resized).forEach(f => zip.file(`resized_${f.original.name}`, f.resized!));
     const blob = await zip.generateAsync({ type: 'blob' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'resized.zip'; a.click();
   };
 
-  const faqs = [
-    { q: 'Can I resize multiple images at once?', a: 'Yes! Upload multiple images and they will all be resized to the same dimensions.' },
-    { q: 'Will resizing reduce quality?', a: 'Downscaling maintains quality. Upscaling uses bicubic interpolation for the best possible result.' },
-    { q: 'What format is the output?', a: 'Resized images are exported as PNG to preserve quality.' },
-  ];
+  const faqs = t.raw('faq') as { q: string; a: string }[];
 
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '48px 24px' }}>
       <div style={{ textAlign: 'center', marginBottom: 40 }}>
-        <h1 style={{ fontSize: 'clamp(26px,4vw,40px)', fontWeight: 800, marginBottom: 12, fontFamily: 'Syne, sans-serif' }}>{t('title')}</h1>
+        <h1 style={{ fontSize: 'clamp(26px,4vw,40px)', fontWeight: 800, marginBottom: 12, fontFamily: 'var(--font-heading)' }}>{t('title')}</h1>
         <p style={{ color: 'var(--text-2)', fontSize: 16 }}>{t('subtitle')}</p>
       </div>
 
@@ -197,7 +212,7 @@ export default function ResizeTool() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {files.map((rf, i) => (
               <div key={i} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: 14, display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-                <img src={rf.preview} alt="" style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8 }} />
+                <NextImage src={rf.preview} alt="" width={56} height={56} unoptimized style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8 }} />
                 <div style={{ flex: 1 }}>
                   <p style={{ fontWeight: 600, fontSize: 14, marginBottom: 2 }}>{rf.original.name}</p>
                   <p style={{ fontSize: 12, color: 'var(--text-3)' }}>
@@ -218,13 +233,13 @@ export default function ResizeTool() {
         </div>
       )}
 
-      <div style={{ margin: '40px 0', padding: 20, borderRadius: 12, border: '1px dashed var(--border-2)', textAlign: 'center', color: 'var(--text-3)', fontSize: 13 }}>📢 Advertisement</div>
+      <SupportNote title={note('title')} body={note('body')} />
       <section>
-        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, fontFamily: 'Syne, sans-serif' }}>{t('howTitle')}</h2>
+        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, fontFamily: 'var(--font-heading)' }}>{t('howTitle')}</h2>
         <p style={{ color: 'var(--text-2)', fontSize: 15, lineHeight: 1.8 }}>{t('howDesc')}</p>
       </section>
       <section style={{ marginTop: 40 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 20, fontFamily: 'Syne, sans-serif' }}>{t('faqTitle')}</h2>
+        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 20, fontFamily: 'var(--font-heading)' }}>{t('faqTitle')}</h2>
         <FAQ faqs={faqs} />
       </section>
     </div>

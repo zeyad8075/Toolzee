@@ -1,12 +1,17 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import NextImage from 'next/image';
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import QRCode from 'qrcode';
+import SupportNote from '@/components/content/SupportNote';
+import { trackAnalyticsEvent } from '@/lib/analytics';
+import { getSiteUrl } from '@/lib/site';
 
 export default function QRTool() {
   const t = useTranslations('qr');
-  const [text, setText] = useState('https://toolforge.app');
+  const note = useTranslations('supportNote');
+  const [text, setText] = useState(getSiteUrl());
   const [size, setSize] = useState(300);
   const [fgColor, setFgColor] = useState('#6c63ff');
   const [bgColor, setBgColor] = useState('#ffffff');
@@ -24,32 +29,49 @@ export default function QRTool() {
         errorCorrectionLevel: 'M',
       });
       setQrDataUrl(url);
+      trackAnalyticsEvent('generate_qr', { input_length: text.trim().length, size });
     } catch (err) {
       console.error(err);
     }
     setGenerating(false);
   };
 
-  useEffect(() => { generateQR(); }, []);
+  useEffect(() => {
+    let active = true;
+
+    QRCode.toDataURL(text, {
+      width: size,
+      margin: 2,
+      color: { dark: fgColor, light: bgColor },
+      errorCorrectionLevel: 'M',
+    })
+      .then(url => {
+        if (active) setQrDataUrl(url);
+      })
+      .catch(err => {
+        console.error(err);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [text, size, fgColor, bgColor]);
 
   const download = () => {
     if (!qrDataUrl) return;
+    trackAnalyticsEvent('download_result', { tool: 'qr', file_type: 'png' });
     const a = document.createElement('a');
     a.href = qrDataUrl;
     a.download = 'qrcode.png';
     a.click();
   };
 
-  const faqs = [
-    { q: 'Is the QR code free to use?', a: 'Yes, all QR codes generated here are free for personal and commercial use.' },
-    { q: 'Do QR codes expire?', a: 'Static QR codes never expire. They work forever once generated.' },
-    { q: 'What can I encode in a QR code?', a: 'URLs, plain text, email addresses, phone numbers, and more.' },
-  ];
+  const faqs = t.raw('faq') as { q: string; a: string }[];
 
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '48px 24px' }}>
       <div style={{ textAlign: 'center', marginBottom: 40 }}>
-        <h1 style={{ fontSize: 'clamp(26px,4vw,40px)', fontWeight: 800, marginBottom: 12, fontFamily: 'Syne, sans-serif' }}>{t('title')}</h1>
+        <h1 style={{ fontSize: 'clamp(26px,4vw,40px)', fontWeight: 800, marginBottom: 12, fontFamily: 'var(--font-heading)' }}>{t('title')}</h1>
         <p style={{ color: 'var(--text-2)', fontSize: 16 }}>{t('subtitle')}</p>
       </div>
 
@@ -118,8 +140,8 @@ export default function QRTool() {
           }}>
             {qrDataUrl ? (
               <>
-                <img src={qrDataUrl} alt="QR Code" style={{
-                  maxWidth: '100%', borderRadius: 12,
+                <NextImage src={qrDataUrl} alt="QR Code" width={size} height={size} unoptimized style={{
+                  maxWidth: '100%', height: 'auto', borderRadius: 12,
                   boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
                 }} />
                 <button onClick={download} className="btn-primary"
@@ -136,16 +158,14 @@ export default function QRTool() {
         </div>
       </div>
 
-      <div style={{ margin: '40px 0', padding: 20, borderRadius: 12, border: '1px dashed var(--border-2)', textAlign: 'center', color: 'var(--text-3)', fontSize: 13 }}>
-        📢 Advertisement – Google AdSense
-      </div>
+      <SupportNote title={note('title')} body={note('body')} />
 
       <section>
-        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, fontFamily: 'Syne, sans-serif' }}>{t('howTitle')}</h2>
+        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, fontFamily: 'var(--font-heading)' }}>{t('howTitle')}</h2>
         <p style={{ color: 'var(--text-2)', fontSize: 15, lineHeight: 1.8 }}>{t('howDesc')}</p>
       </section>
       <section style={{ marginTop: 40 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 20, fontFamily: 'Syne, sans-serif' }}>{t('faqTitle')}</h2>
+        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 20, fontFamily: 'var(--font-heading)' }}>{t('faqTitle')}</h2>
         <FAQ faqs={faqs} />
       </section>
     </div>

@@ -1,6 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
+import AdConsentManager from '@/components/ads/AdConsentManager';
+import {
+  getAdSenseClientId,
+  getAnalyticsMeasurementId,
+  isAdSenseConfigured,
+  isAnalyticsConfigured,
+} from '@/lib/ads';
 import Header from './Header';
 import Footer from './Footer';
 
@@ -13,12 +21,15 @@ export default function ThemeProvider({
   locale: string;
   isRTL: boolean;
 }) {
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-
-  useEffect(() => {
-    const saved = localStorage.getItem('theme') as 'dark' | 'light' | null;
-    if (saved) setTheme(saved);
-  }, []);
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof window === 'undefined') return 'dark';
+    const saved = localStorage.getItem('theme');
+    return saved === 'light' ? 'light' : 'dark';
+  });
+  const [adSettingsOpen, setAdSettingsOpen] = useState(false);
+  const adSenseConfigured = isAdSenseConfigured(getAdSenseClientId());
+  const analyticsConfigured = isAnalyticsConfigured(getAnalyticsMeasurementId());
+  const privacyControlsConfigured = adSenseConfigured || analyticsConfigured;
 
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark';
@@ -36,7 +47,12 @@ export default function ThemeProvider({
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Header locale={locale} theme={theme} onToggleTheme={toggleTheme} />
       <main style={{ flex: 1 }}>{children}</main>
-      <Footer locale={locale} />
+      <Footer
+        locale={locale}
+        onOpenAdSettings={privacyControlsConfigured ? () => setAdSettingsOpen(true) : undefined}
+      />
+      <AdConsentManager isOpen={adSettingsOpen} onClose={() => setAdSettingsOpen(false)} />
+      <GoogleAnalytics />
     </div>
   );
 }

@@ -12,7 +12,7 @@ export default function FAQSection({ title, faqs }: { title: string; faqs: FAQ[]
 
   return (
     <section style={{ maxWidth: 720, margin: '0 auto', padding: '48px 0' }}>
-      <h2 style={{ fontWeight: 800, fontSize: 24, marginBottom: 24, fontFamily: 'Syne, sans-serif' }}>{title}</h2>
+      <h2 style={{ fontWeight: 800, fontSize: 24, marginBottom: 24, fontFamily: 'var(--font-heading)' }}>{title}</h2>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {faqs.map((faq, i) => (
           <div key={i} style={{

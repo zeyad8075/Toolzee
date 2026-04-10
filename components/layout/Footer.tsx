@@ -3,9 +3,16 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
-export default function Footer({ locale }: { locale: string }) {
+export default function Footer({
+  locale,
+  onOpenAdSettings,
+}: {
+  locale: string;
+  onOpenAdSettings?: () => void;
+}) {
   const t = useTranslations('footer');
   const nav = useTranslations('nav');
+  const ads = useTranslations('ads');
 
   return (
     <footer style={{
@@ -24,23 +31,17 @@ export default function Footer({ locale }: { locale: string }) {
           {/* Brand */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-              <div style={{
+            <div style={{
                 width: 28, height: 28, borderRadius: 7,
                 background: 'linear-gradient(135deg, var(--accent), var(--accent-2))',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 14, fontWeight: 800, color: 'white',
               }}>T</div>
-              <span style={{ fontWeight: 800, fontSize: 16, fontFamily: 'Syne, sans-serif' }}>ToolForge</span>
+              <span style={{ fontWeight: 800, fontSize: 16, fontFamily: 'var(--font-heading)' }}>Toolzee</span>
             </div>
             <p style={{ color: 'var(--text-3)', fontSize: 13, lineHeight: 1.6 }}>{t('tagline')}</p>
-            <a href="https://buymeacoffee.com" target="_blank" rel="noopener noreferrer"
-              style={{
-                display: 'inline-block', marginTop: 16, padding: '8px 16px',
-                background: '#FFDD00', color: '#000', borderRadius: 8,
-                textDecoration: 'none', fontSize: 13, fontWeight: 600,
-              }}>
-              {t('buyCoffee')}
-            </a>
+            <p style={{ color: 'var(--text-3)', fontSize: 13, lineHeight: 1.6, marginTop: 14 }}>{t('dataNote')}</p>
+            <p style={{ color: 'var(--text-3)', fontSize: 13, lineHeight: 1.6, marginTop: 10 }}>{t('fundingNote')}</p>
           </div>
 
           {/* Tools */}
@@ -70,10 +71,10 @@ export default function Footer({ locale }: { locale: string }) {
               {t('company')}
             </h4>
             {[
-              { label: t('about'), href: '#' },
-              { label: t('privacy'), href: '#' },
-              { label: t('contact'), href: '#' },
-              { label: nav('apiDocs'), href: `/${locale}/api-docs` },
+              { label: t('about'), href: `/${locale}/about` },
+              { label: t('privacy'), href: `/${locale}/privacy` },
+              { label: t('terms'), href: `/${locale}/terms` },
+              { label: t('contact'), href: `/${locale}/contact` },
             ].map(item => (
               <Link key={item.label} href={item.href}
                 style={{ display: 'block', color: 'var(--text-3)', fontSize: 14, textDecoration: 'none', marginBottom: 10, transition: 'color 0.2s' }}
@@ -82,31 +83,28 @@ export default function Footer({ locale }: { locale: string }) {
                 {item.label}
               </Link>
             ))}
-          </div>
-
-          {/* Affiliate */}
-          <div>
-            <h4 style={{ fontWeight: 700, fontSize: 13, marginBottom: 16, color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              {t('affiliate')}
-            </h4>
-            {[
-              { label: 'Canva – Design Tool', href: 'https://canva.com' },
-              { label: 'Hostinger – Web Hosting', href: 'https://hostinger.com' },
-              { label: 'Namecheap – Domains', href: 'https://namecheap.com' },
-            ].map(item => (
-              <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer"
-                style={{ display: 'block', color: 'var(--text-3)', fontSize: 14, textDecoration: 'none', marginBottom: 10, transition: 'color 0.2s' }}
-                onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
-                onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-3)')}>
-                {item.label} ↗
-              </a>
-            ))}
+            {onOpenAdSettings ? (
+              <button
+                type="button"
+                onClick={onOpenAdSettings}
+                className="btn-ghost"
+                style={{
+                  marginTop: 12,
+                  padding: '10px 14px',
+                  borderRadius: 12,
+                  fontSize: 13,
+                  cursor: 'pointer',
+                }}
+              >
+                {ads('manage')}
+              </button>
+            ) : null}
           </div>
         </div>
 
         <div style={{ borderTop: '1px solid var(--border)', paddingTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
           <p style={{ color: 'var(--text-3)', fontSize: 13 }}>
-            © {new Date().getFullYear()} ToolForge. {t('rights')}
+            © {new Date().getFullYear()} Toolzee. {t('rights')}
           </p>
           <p style={{ color: 'var(--text-3)', fontSize: 13 }}>
             {t('madeWith')} for the web

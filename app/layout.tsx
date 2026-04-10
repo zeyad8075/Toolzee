@@ -1,19 +1,50 @@
 import type { Metadata } from "next";
+import { Cairo, DM_Sans, Syne } from "next/font/google";
 import "./globals.css";
+import { getGoogleSiteVerification, getSiteUrl, SITE_NAME } from "@/lib/site";
+
+const syne = Syne({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["400", "600", "700", "800"],
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-body",
+});
+
+const cairo = Cairo({
+  subsets: ["arabic", "latin"],
+  variable: "--font-arabic",
+  weight: ["400", "600", "700"],
+});
 
 export const metadata: Metadata = {
-  title: { template: "%s | ToolForge", default: "ToolForge – Free Online Tools" },
-  description: "Free online image compression, conversion, resizing, QR generation, and AI-powered tools.",
+  metadataBase: new URL(getSiteUrl()),
+  title: { template: `%s | ${SITE_NAME}`, default: `${SITE_NAME} – Free Online Tools` },
+  description: "Free online tools for images, QR codes, and text. Image tools run in your browser and text is generated only when requested.",
+  applicationName: SITE_NAME,
+  verification: {
+    google: getGoogleSiteVerification(),
+  },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} – Free Online Tools`,
+    description: "Free online tools for images, QR codes, and text. Image tools run in your browser and text is generated only when requested.",
+    url: getSiteUrl(),
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} – Free Online Tools`,
+    description: "Free online tools for images, QR codes, and text. Image tools run in your browser and text is generated only when requested.",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
-      </head>
+    <html suppressHydrationWarning className={`${syne.variable} ${dmSans.variable} ${cairo.variable}`}>
       <body>{children}</body>
     </html>
   );

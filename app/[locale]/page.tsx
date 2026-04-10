@@ -1,16 +1,34 @@
-import { useTranslations } from 'next-intl';
-import Link from 'next/link';
 import type { Metadata } from 'next';
+import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
+import SupportNote from '@/components/content/SupportNote';
+import JsonLd from '@/components/seo/JsonLd';
+import { buildLocalizedMetadata } from '@/lib/metadata';
+import { buildItemListSchema, buildWebsiteSchema } from '@/lib/structured-data';
+
+const homePageContent = {
+  en: {
+    title: 'Toolzee – Free Online Tools',
+    description: 'Free tools for images, QR codes, and text. Image tools run in your browser, while text generation is handled by our provider when requested.',
+    toolListLabel: 'Toolzee tools',
+  },
+  ar: {
+    title: 'Toolzee – أدوات مجانية عبر الإنترنت',
+    description: 'أدوات مجانية للصور وQR والنصوص. أدوات الصور تعمل داخل المتصفح، بينما يتم توليد النصوص عبر مزودنا عند الطلب.',
+    toolListLabel: 'أدوات Toolzee',
+  },
+} as const;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return {
-    title: locale === 'ar' ? 'ToolForge – أدوات مجانية عبر الإنترنت' : 'ToolForge – Free Online Tools',
-    description: locale === 'ar'
-      ? 'ضغط وتحويل وتغيير حجم الصور وإنشاء رموز QR مجاناً عبر الإنترنت'
-      : 'Compress, convert, resize images and generate QR codes — all free, all instant, all private.',
-    alternates: { canonical: `/${locale}`, languages: { en: '/en', ar: '/ar' } },
-  };
+  const page = homePageContent[locale === 'ar' ? 'ar' : 'en'];
+
+  return buildLocalizedMetadata({
+    locale: locale === 'ar' ? 'ar' : 'en',
+    path: '',
+    title: page.title,
+    description: page.description,
+  });
 }
 
 const toolCards = [
@@ -22,17 +40,32 @@ const toolCards = [
   { key: 'aiText', href: 'ai-tools', icon: '🤖', gradient: 'linear-gradient(135deg,#8b5cf622,#6d28d911)' },
 ];
 
-const features = [
-  { icon: '🔒', title: '100% Private', desc: 'All processing in your browser. Nothing uploaded to servers.' },
-  { icon: '⚡', title: 'Lightning Fast', desc: 'Client-side processing means instant results, no waiting.' },
-  { icon: '🆓', title: 'Always Free', desc: 'Core tools are free forever. No account required.' },
-];
-
-export default function HomePage({ params }: { params: Promise<{ locale: string }> }) {
-  const t = useTranslations();
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const normalizedLocale = locale === 'ar' ? 'ar' : 'en';
+  const page = homePageContent[normalizedLocale];
+  const t = await getTranslations();
+  const toolList = toolCards.map(card => ({
+    name: t(`tools.${card.key}.name`),
+    path: card.href,
+  }));
+  const features = locale === 'ar'
+    ? [
+        { icon: '🖼️', title: 'أدوات الصور محلية', desc: 'الضغط والتحويل وتغيير الحجم وتوليد QR تعمل مباشرة داخل متصفحك.' },
+        { icon: '✍️', title: 'النصوص عبر مزود خارجي', desc: 'ميزة توليد النصوص ترسل الطلب فقط عند استخدامها للحصول على النتيجة.' },
+        { icon: '📢', title: 'مجاني ومدعوم بالإعلانات', desc: 'نهدف إلى إبقاء الأدوات مجانية عبر إعلانات واضحة وغير مضللة.' },
+      ]
+    : [
+        { icon: '🖼️', title: 'Browser-based image tools', desc: 'Compression, conversion, resizing, and QR generation happen directly in your browser.' },
+        { icon: '✍️', title: 'Text uses an external provider', desc: 'The text generator sends your prompt only when you choose to generate AI content.' },
+        { icon: '📢', title: 'Free and ad-supported', desc: 'We plan to keep the core tools free through clearly labeled ads.' },
+      ];
 
   return (
     <div>
+      <JsonLd id="toolzee-website-schema" data={buildWebsiteSchema(normalizedLocale, page.description)} />
+      <JsonLd id="toolzee-itemlist-schema" data={buildItemListSchema(normalizedLocale, page.toolListLabel, toolList)} />
+
       {/* Hero */}
       <section style={{
         padding: '80px 24px 60px',
@@ -62,7 +95,7 @@ export default function HomePage({ params }: { params: Promise<{ locale: string 
           <h1 style={{
             fontSize: 'clamp(42px, 7vw, 76px)', fontWeight: 800,
             lineHeight: 1.05, letterSpacing: '-0.03em',
-            marginBottom: 8, fontFamily: 'Syne, sans-serif',
+            marginBottom: 8, fontFamily: 'var(--font-heading)',
           }}>
             {t('hero.title')}<br />
             <span className="gradient-text">{t('hero.titleHighlight')}</span>
@@ -117,7 +150,7 @@ export default function HomePage({ params }: { params: Promise<{ locale: string 
       <section id="tools" style={{ padding: '0 24px 80px' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <h2 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800, marginBottom: 12, fontFamily: 'Syne, sans-serif' }}>
+            <h2 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800, marginBottom: 12, fontFamily: 'var(--font-heading)' }}>
               {t('tools.title')}
             </h2>
             <p style={{ color: 'var(--text-2)', fontSize: 16 }}>{t('tools.subtitle')}</p>
@@ -129,31 +162,32 @@ export default function HomePage({ params }: { params: Promise<{ locale: string 
             gap: 20,
           }}>
             {toolCards.map(card => (
-              <ToolCard key={card.key} card={card} t={t} />
+              <ToolCard key={card.key} card={card} locale={locale} t={t} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Ad banner placeholder */}
       <div style={{
         maxWidth: 800, margin: '0 auto 60px', padding: '0 24px',
       }}>
-        <div style={{
-          padding: '20px', borderRadius: 12,
-          border: '1px dashed var(--border-2)',
-          textAlign: 'center', color: 'var(--text-3)', fontSize: 13,
-        }}>
-          📢 Advertisement Space – Google AdSense
-        </div>
+        <SupportNote title={t('supportNote.title')} body={t('supportNote.body')} />
       </div>
     </div>
   );
 }
 
-function ToolCard({ card, t }: { card: typeof toolCards[0]; t: ReturnType<typeof useTranslations> }) {
+function ToolCard({
+  card,
+  locale,
+  t,
+}: {
+  card: typeof toolCards[0];
+  locale: string;
+  t: Awaited<ReturnType<typeof getTranslations>>;
+}) {
   return (
-    <a href={`/en/${card.href}`} className="tool-card" style={{
+    <Link href={`/${locale}/${card.href}`} className="tool-card" style={{
       borderRadius: 16, padding: 28, textDecoration: 'none',
       display: 'flex', flexDirection: 'column', gap: 12,
       background: card.gradient,
@@ -180,6 +214,6 @@ function ToolCard({ card, t }: { card: typeof toolCards[0]; t: ReturnType<typeof
       }}>
         {t('common.free')} · {t('common.fast')} →
       </div>
-    </a>
+    </Link>
   );
 }

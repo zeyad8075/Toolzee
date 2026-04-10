@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 :root {
+  --font-body-active: var(--font-body);
+  --font-heading: var(--font-display);
   --bg: #0a0a0f;
   --bg-2: #111118;
   --bg-3: #1a1a24;
@@ -41,11 +43,14 @@ html { scroll-behavior: smooth; }
 body {
   background-color: var(--bg);
   color: var(--text);
-  font-family: 'Syne', 'DM Sans', system-ui, sans-serif;
+  font-family: var(--font-body-active), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-[dir="rtl"] { font-family: 'Cairo', 'Tajawal', system-ui, sans-serif; }
+[dir="rtl"] {
+  --font-body-active: var(--font-arabic);
+  --font-heading: var(--font-arabic);
+}
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-2); }

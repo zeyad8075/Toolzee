@@ -1,8 +1,11 @@
 'use client';
 
+import NextImage from 'next/image';
 import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useDropzone } from 'react-dropzone';
+import SupportNote from '@/components/content/SupportNote';
+import { trackAnalyticsEvent } from '@/lib/analytics';
 
 const TONES = ['Professional', 'Casual', 'Creative', 'Persuasive'];
 
@@ -41,6 +44,9 @@ function enhanceImage(file: File): Promise<Blob> {
 
 export default function AITools() {
   const t = useTranslations('ai');
+  const note = useTranslations('supportNote');
+  const toneLabels = t.raw('textGen.tones') as string[];
+  const tones = TONES.map((value, index) => ({ value, label: toneLabels[index] || value }));
 
   // Enhancer state
   const [enhFile, setEnhFile] = useState<File | null>(null);
@@ -51,7 +57,7 @@ export default function AITools() {
 
   // Text gen state
   const [prompt, setPrompt] = useState('');
-  const [tone, setTone] = useState(TONES[0]);
+  const [tone, setTone] = useState(tones[0]?.value || TONES[0]);
   const [genResult, setGenResult] = useState('');
   const [generating, setGenerating] = useState(false);
 
@@ -61,6 +67,7 @@ export default function AITools() {
       setEnhPreview(URL.createObjectURL(files[0]));
       setEnhResult('');
       setEnhDone(false);
+      trackAnalyticsEvent('upload_images', { tool: 'enhance', file_count: 1 });
     }
   }, []);
 
@@ -74,17 +81,22 @@ export default function AITools() {
     if (!enhFile) return;
     setEnhancing(true);
     setEnhDone(false);
+    trackAnalyticsEvent('enhance_start', { file_type: enhFile.type || 'image' });
     await new Promise(r => setTimeout(r, 1500)); // simulate AI delay
     try {
       const blob = await enhanceImage(enhFile);
       setEnhResult(URL.createObjectURL(blob));
       setEnhDone(true);
-    } catch { }
+      trackAnalyticsEvent('enhance_complete', { status: 'success' });
+    } catch {
+      trackAnalyticsEvent('enhance_complete', { status: 'error' });
+    }
     setEnhancing(false);
   };
 
   const downloadEnhanced = () => {
     if (!enhResult) return;
+    trackAnalyticsEvent('download_result', { tool: 'enhance', file_type: 'png' });
     const a = document.createElement('a');
     a.href = enhResult; a.download = 'enhanced.png'; a.click();
   };
@@ -93,6 +105,7 @@ export default function AITools() {
     if (!prompt.trim()) return;
     setGenerating(true);
     setGenResult('');
+    trackAnalyticsEvent('generate_text_start', { tone, prompt_length: prompt.trim().length });
     try {
       const res = await fetch('/api/generate-text', {
         method: 'POST',
@@ -101,16 +114,27 @@ export default function AITools() {
       });
       const data = await res.json();
       setGenResult(data.text || 'Error generating text.');
+      trackAnalyticsEvent('generate_text_complete', {
+        tone,
+        status: res.ok ? 'success' : 'error',
+      });
     } catch {
       setGenResult('Unable to connect to AI service. Please try again.');
+      trackAnalyticsEvent('generate_text_complete', { tone, status: 'network_error' });
     }
     setGenerating(false);
+  };
+
+  const copyGeneratedText = async () => {
+    if (!genResult) return;
+    await navigator.clipboard.writeText(genResult);
+    trackAnalyticsEvent('copy_generated_text', { tool: 'ai_text' });
   };
 
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '48px 24px' }}>
       <div style={{ textAlign: 'center', marginBottom: 48 }}>
-        <h1 style={{ fontSize: 'clamp(26px,4vw,40px)', fontWeight: 800, marginBottom: 12, fontFamily: 'Syne, sans-serif' }}>
+        <h1 style={{ fontSize: 'clamp(26px,4vw,40px)', fontWeight: 800, marginBottom: 12, fontFamily: 'var(--font-heading)' }}>
           {t('title')}
         </h1>
         <p style={{ color: 'var(--text-2)', fontSize: 16 }}>{t('subtitle')}</p>
@@ -124,11 +148,11 @@ export default function AITools() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
           <div style={{ width: 44, height: 44, borderRadius: 12, background: 'linear-gradient(135deg,#ec4899,#a855f7)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>✨</div>
           <div>
-            <h2 style={{ fontWeight: 800, fontSize: 20, fontFamily: 'Syne, sans-serif' }}>{t('enhancer.title')}</h2>
+            <h2 style={{ fontWeight: 800, fontSize: 20, fontFamily: 'var(--font-heading)' }}>{t('enhancer.title')}</h2>
             <p style={{ color: 'var(--text-2)', fontSize: 14 }}>{t('enhancer.desc')}</p>
           </div>
           <div style={{ marginInlineStart: 'auto', padding: '4px 12px', borderRadius: 6, background: 'rgba(168,85,247,0.12)', color: '#a855f7', fontSize: 12, fontWeight: 600 }}>
-            AI Powered
+            {t('badges.local')}
           </div>
         </div>
 
@@ -136,7 +160,7 @@ export default function AITools() {
           style={{ borderRadius: 14, padding: '32px 24px', textAlign: 'center', marginTop: 20 }}>
           <input {...getInputProps()} />
           {enhPreview ? (
-            <img src={enhPreview} alt="preview" style={{ maxHeight: 160, maxWidth: '100%', borderRadius: 10, objectFit: 'contain' }} />
+            <NextImage src={enhPreview} alt="preview" width={320} height={160} unoptimized style={{ maxHeight: 160, maxWidth: '100%', width: 'auto', height: 'auto', borderRadius: 10, objectFit: 'contain' }} />
           ) : (
             <div>
               <div style={{ fontSize: 36, marginBottom: 8 }}>{isDragActive ? '📂' : '🖼️'}</div>
@@ -169,7 +193,7 @@ export default function AITools() {
         {enhDone && enhResult && (
           <div style={{ marginTop: 16, padding: 16, borderRadius: 12, background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ fontSize: 20 }}>✅</span>
-            <span style={{ color: 'var(--green)', fontWeight: 600, fontSize: 14 }}>{t('enhancer.done')} Upscaled 1.5× with AI sharpening.</span>
+            <span style={{ color: 'var(--green)', fontWeight: 600, fontSize: 14 }}>{t('enhancer.resultNote')}</span>
           </div>
         )}
       </section>
@@ -182,11 +206,11 @@ export default function AITools() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
           <div style={{ width: 44, height: 44, borderRadius: 12, background: 'linear-gradient(135deg,#6c63ff,#a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>🤖</div>
           <div>
-            <h2 style={{ fontWeight: 800, fontSize: 20, fontFamily: 'Syne, sans-serif' }}>{t('textGen.title')}</h2>
+            <h2 style={{ fontWeight: 800, fontSize: 20, fontFamily: 'var(--font-heading)' }}>{t('textGen.title')}</h2>
             <p style={{ color: 'var(--text-2)', fontSize: 14 }}>{t('textGen.desc')}</p>
           </div>
           <div style={{ marginInlineStart: 'auto', padding: '4px 12px', borderRadius: 6, background: 'rgba(108,99,255,0.12)', color: 'var(--accent)', fontSize: 12, fontWeight: 600 }}>
-            AI Powered
+            {t('badges.text')}
           </div>
         </div>
 
@@ -208,14 +232,14 @@ export default function AITools() {
         <div style={{ marginBottom: 16 }}>
           <label style={{ fontWeight: 600, fontSize: 14, display: 'block', marginBottom: 10 }}>{t('textGen.tone')}</label>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {TONES.map(to => (
-              <button key={to} onClick={() => setTone(to)} style={{
+            {tones.map(to => (
+              <button key={to.value} onClick={() => setTone(to.value)} style={{
                 padding: '8px 18px', borderRadius: 8, fontWeight: 600, fontSize: 13,
                 border: '1px solid', cursor: 'pointer', transition: 'all 0.2s',
-                background: tone === to ? 'var(--accent)' : 'var(--bg-3)',
-                borderColor: tone === to ? 'var(--accent)' : 'var(--border)',
-                color: tone === to ? 'white' : 'var(--text-2)',
-              }}>{to}</button>
+                background: tone === to.value ? 'var(--accent)' : 'var(--bg-3)',
+                borderColor: tone === to.value ? 'var(--accent)' : 'var(--border)',
+                color: tone === to.value ? 'white' : 'var(--text-2)',
+              }}>{to.label}</button>
             ))}
           </div>
         </div>
@@ -240,7 +264,7 @@ export default function AITools() {
               position: 'relative',
             }}>
               {genResult}
-              <button onClick={() => navigator.clipboard.writeText(genResult)}
+              <button onClick={copyGeneratedText}
                 style={{
                   position: 'absolute', top: 12, insetInlineEnd: 12,
                   padding: '6px 12px', borderRadius: 6,
@@ -254,9 +278,7 @@ export default function AITools() {
         )}
       </section>
 
-      <div style={{ margin: '32px 0', padding: 20, borderRadius: 12, border: '1px dashed var(--border-2)', textAlign: 'center', color: 'var(--text-3)', fontSize: 13 }}>
-        📢 Advertisement – Google AdSense
-      </div>
+      <SupportNote title={note('title')} body={note('body')} />
     </div>
   );
 }

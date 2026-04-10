@@ -1,8 +1,11 @@
 'use client';
 
+import NextImage from 'next/image';
 import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import DropZone from '@/components/tools/DropZone';
+import SupportNote from '@/components/content/SupportNote';
+import { trackAnalyticsEvent } from '@/lib/analytics';
 import JSZip from 'jszip';
 
 interface CompressedFile {
@@ -17,6 +20,7 @@ interface CompressedFile {
 export default function CompressTool() {
   const t = useTranslations('compress');
   const tc = useTranslations('common');
+  const note = useTranslations('supportNote');
   const [files, setFiles] = useState<CompressedFile[]>([]);
   const [quality, setQuality] = useState(80);
   const [processing, setProcessing] = useState(false);
@@ -29,6 +33,7 @@ export default function CompressTool() {
       status: 'pending',
     }));
     setFiles(prev => [...prev, ...newFiles]);
+    trackAnalyticsEvent('upload_images', { tool: 'compress', file_count: accepted.length });
   }, []);
 
   const compressImage = async (file: File, q: number): Promise<Blob> => {
@@ -52,6 +57,7 @@ export default function CompressTool() {
 
   const handleCompress = async () => {
     setProcessing(true);
+    trackAnalyticsEvent('compress_start', { file_count: files.length, quality });
     const updated = [...files];
     for (let i = 0; i < updated.length; i++) {
       if (updated[i].status === 'done') continue;
@@ -65,11 +71,17 @@ export default function CompressTool() {
       }
       setFiles([...updated]);
     }
+    trackAnalyticsEvent('compress_complete', {
+      file_count: updated.filter(file => file.status === 'done').length,
+      error_count: updated.filter(file => file.status === 'error').length,
+      quality,
+    });
     setProcessing(false);
   };
 
   const downloadFile = (cf: CompressedFile) => {
     if (!cf.compressed) return;
+    trackAnalyticsEvent('download_result', { tool: 'compress', file_type: 'jpg' });
     const url = URL.createObjectURL(cf.compressed);
     const a = document.createElement('a');
     a.href = url;
@@ -79,6 +91,7 @@ export default function CompressTool() {
   };
 
   const downloadAll = async () => {
+    trackAnalyticsEvent('download_zip', { tool: 'compress', file_count: files.filter(file => file.compressed).length });
     const zip = new JSZip();
     files.filter(f => f.compressed).forEach(f => {
       zip.file(`compressed_${f.original.name.replace(/\.[^.]+$/, '')}.jpg`, f.compressed!);
@@ -93,16 +106,12 @@ export default function CompressTool() {
   const fmt = (b: number) => b > 1024 * 1024 ? `${(b / 1024 / 1024).toFixed(1)} MB` : `${(b / 1024).toFixed(0)} KB`;
   const saved = (o: number, c: number) => c > 0 ? Math.round((1 - c / o) * 100) : 0;
 
-  const faqs = [
-    { q: 'What is image compression?', a: 'Image compression reduces file size by removing redundant data while preserving visual quality.' },
-    { q: 'How to reduce image size without losing quality?', a: 'Use lossy compression with 80-90% quality for the best balance.' },
-    { q: 'Is my data private?', a: 'All processing happens in your browser. Files never leave your device.' },
-  ];
+  const faqs = t.raw('faq') as { q: string; a: string }[];
 
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '48px 24px' }}>
       <div style={{ textAlign: 'center', marginBottom: 40 }}>
-        <h1 style={{ fontSize: 'clamp(26px,4vw,40px)', fontWeight: 800, marginBottom: 12, fontFamily: 'Syne, sans-serif' }}>
+        <h1 style={{ fontSize: 'clamp(26px,4vw,40px)', fontWeight: 800, marginBottom: 12, fontFamily: 'var(--font-heading)' }}>
           {t('title')}
         </h1>
         <p style={{ color: 'var(--text-2)', fontSize: 16 }}>{t('subtitle')}</p>
@@ -158,7 +167,7 @@ export default function CompressTool() {
                 flexWrap: 'wrap',
               }}>
                 {/* Preview */}
-                <img src={cf.preview} alt="" style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 8 }} />
+                <NextImage src={cf.preview} alt="" width={64} height={64} unoptimized style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 8 }} />
 
                 {/* Info */}
                 <div style={{ flex: 1, minWidth: 200 }}>
@@ -209,20 +218,17 @@ export default function CompressTool() {
         </div>
       )}
 
-      {/* Ad space */}
-      <div style={{ margin: '40px 0', padding: 20, borderRadius: 12, border: '1px dashed var(--border-2)', textAlign: 'center', color: 'var(--text-3)', fontSize: 13 }}>
-        📢 Advertisement – Google AdSense
-      </div>
+      <SupportNote title={note('title')} body={note('body')} />
 
       {/* How-to */}
       <section style={{ marginTop: 40 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, fontFamily: 'Syne, sans-serif' }}>{t('howTitle')}</h2>
+        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, fontFamily: 'var(--font-heading)' }}>{t('howTitle')}</h2>
         <p style={{ color: 'var(--text-2)', fontSize: 15, lineHeight: 1.8 }}>{t('howDesc')}</p>
       </section>
 
       {/* FAQ */}
       <section style={{ marginTop: 40 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 20, fontFamily: 'Syne, sans-serif' }}>{t('faqTitle')}</h2>
+        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 20, fontFamily: 'var(--font-heading)' }}>{t('faqTitle')}</h2>
         <FAQAccordion faqs={faqs} />
       </section>
     </div>

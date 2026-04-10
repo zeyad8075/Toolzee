@@ -27,16 +27,11 @@ Open http://localhost:3000 → auto-redirects to /en
 - English `/en` (default) + Arabic `/ar` (full RTL)
 - Translations: `/translations/en.json` and `/translations/ar.json`
 
-## Deploy
+## Deploy on Netlify
 
 ```bash
-vercel
-vercel env add ANTHROPIC_API_KEY
-vercel env add NEXT_PUBLIC_APP_URL
-vercel env add NEXT_PUBLIC_CONTACT_EMAIL
-vercel env add NEXT_PUBLIC_ADSENSE_ID
-vercel env add NEXT_PUBLIC_GA_MEASUREMENT_ID
-vercel env add GOOGLE_SITE_VERIFICATION
+Build command: npm run build
+Publish directory: .next
 ```
 
 Toolzee is currently positioned as a free, ad-supported website rather than a paid public API.

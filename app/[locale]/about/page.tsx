@@ -7,14 +7,14 @@ const content = {
   en: {
     eyebrow: 'About Toolzee',
     title: 'Free online tools for everyday work',
-    intro: 'Toolzee is a lightweight collection of browser-friendly tools for images, QR codes, and short-form AI writing. We focus on fast workflows, clear UX, and honest product messaging.',
+    intro: 'Toolzee is a lightweight collection of browser-friendly tools for images and QR codes. We focus on fast workflows, clear UX, and honest product messaging.',
     metaTitle: 'About Toolzee',
-    metaDescription: 'Learn what Toolzee offers, how its tools work, and how we plan to keep the service free.',
+    metaDescription: 'Learn what Toolzee offers, how its browser-based tools work, and how the service stays free.',
     sections: [
       {
         title: 'What Toolzee offers',
         paragraphs: [
-          'Toolzee is built for quick tasks: compressing, converting, resizing images, generating QR codes, and drafting short text with AI help.',
+          'Toolzee is built for quick tasks: compressing images, converting image formats, resizing images, and generating QR codes.',
           'We want the tools to feel simple enough for casual use while still being dependable for day-to-day work.',
         ],
       },
@@ -22,14 +22,14 @@ const content = {
         title: 'How the tools work',
         paragraphs: [
           'Our image tools and QR generator run directly in your browser whenever possible, so your files do not need to be uploaded for those features.',
-          'The AI text tool is different: when you use it, your prompt is sent to our text-generation provider so a response can be created.',
+          'The result is created on your device for the core tools, which keeps the workflow fast and simple.',
         ],
       },
       {
         title: 'How the site is funded',
         paragraphs: [
-          'Toolzee is designed to stay free for visitors and be supported by clearly labeled ads when they are enabled.',
-          'We are not currently offering paid API plans through the site. If that changes in the future, the product pages and policies will be updated first.',
+          'Toolzee stays free for visitors and is supported by clearly labeled ads when they are enabled.',
+          'We do not sell paid API plans through the site.',
         ],
       },
     ],
@@ -39,14 +39,14 @@ const content = {
   ar: {
     eyebrow: 'حول Toolzee',
     title: 'أدوات مجانية للمهام اليومية عبر الإنترنت',
-    intro: 'Toolzee عبارة عن مجموعة خفيفة من الأدوات المناسبة للمتصفح للصور ورموز QR وكتابة النصوص القصيرة بالذكاء الاصطناعي. نركز على السرعة والوضوح والرسائل الصادقة للمستخدم.',
+    intro: 'Toolzee عبارة عن مجموعة خفيفة من الأدوات المناسبة للمتصفح للصور ورموز QR. نركز على السرعة والوضوح والرسائل الصادقة للمستخدم.',
     metaTitle: 'حول Toolzee',
-    metaDescription: 'تعرّف على ما يقدمه Toolzee وكيف تعمل أدواته وكيف نخطط للإبقاء على الخدمة مجانية.',
+    metaDescription: 'تعرّف على ما يقدمه Toolzee وكيف تعمل أدواته داخل المتصفح وكيف تبقى الخدمة مجانية.',
     sections: [
       {
         title: 'ما الذي يقدمه Toolzee',
         paragraphs: [
-          'تم تصميم Toolzee للمهام السريعة مثل ضغط الصور وتحويلها وتغيير حجمها وإنشاء رموز QR وصياغة نصوص قصيرة بمساعدة الذكاء الاصطناعي.',
+          'تم تصميم Toolzee للمهام السريعة مثل ضغط الصور وتحويلها وتغيير حجمها وإنشاء رموز QR.',
           'نريد أن تكون الأدوات سهلة للاستخدام السريع، وفي الوقت نفسه موثوقة للأعمال اليومية.',
         ],
       },
@@ -54,14 +54,14 @@ const content = {
         title: 'كيف تعمل الأدوات',
         paragraphs: [
           'أدوات الصور ومولد QR تعمل مباشرة داخل متصفحك كلما أمكن، لذلك لا تحتاج ملفاتك إلى الرفع لاستخدام هذه الميزات.',
-          'أما أداة النصوص فهي مختلفة: عند استخدامها يتم إرسال طلبك إلى مزود توليد النصوص لدينا لكي يتم إنشاء النتيجة.',
+          'يتم إنشاء النتيجة على جهازك في الأدوات الأساسية، مما يجعل الاستخدام سريعاً وبسيطاً.',
         ],
       },
       {
         title: 'كيف يتم تمويل الموقع',
         paragraphs: [
-          'تم تصميم Toolzee ليبقى مجانياً للزوار ومدعوماً عبر إعلانات واضحة عند تفعيلها.',
-          'لا نقدم حالياً خطط API مدفوعة عبر الموقع. وإذا تغيّر ذلك مستقبلاً فسيتم تحديث صفحات المنتج والسياسات أولاً.',
+          'يبقى Toolzee مجانياً للزوار ومدعوماً عبر إعلانات واضحة عند تفعيلها.',
+          'لا نبيع حالياً خطط API مدفوعة عبر الموقع.',
         ],
       },
     ],

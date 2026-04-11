@@ -3,7 +3,7 @@ import { getAbsoluteUrl } from '@/lib/site';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const locales = ['en', 'ar'];
-  const routes = ['', '/compress-image', '/convert-image', '/resize-image', '/qr-generator', '/ai-tools', '/about', '/privacy', '/terms', '/contact'];
+  const routes = ['', '/compress-image', '/convert-image', '/resize-image', '/qr-generator', '/about', '/privacy', '/terms', '/contact'];
 
   const urls: MetadataRoute.Sitemap = [];
 

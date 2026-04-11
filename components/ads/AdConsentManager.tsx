@@ -267,8 +267,8 @@ export default function AdConsentManager({
             fontSize: 12,
             fontWeight: 700,
             color: 'var(--accent-2)',
-            background: 'rgba(108,99,255,0.14)',
-            border: '1px solid rgba(108,99,255,0.25)',
+            background: 'var(--accent-soft)',
+            border: '1px solid var(--accent-border)',
             borderRadius: 999,
             padding: '6px 10px',
           }}>

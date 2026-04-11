@@ -38,7 +38,7 @@ export default function Header({ locale, theme, onToggleTheme }: HeaderProps) {
               width: 32, height: 32, borderRadius: 8,
               background: 'linear-gradient(135deg, var(--accent), var(--accent-2))',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 16, fontWeight: 800, color: 'white'
+              fontSize: 16, fontWeight: 800, color: 'var(--accent-contrast)'
             }}>T</div>
             <span style={{ fontWeight: 800, fontSize: 18, color: 'var(--text)', fontFamily: 'var(--font-heading)' }}>
               Toolzee
@@ -93,7 +93,6 @@ export default function Header({ locale, theme, onToggleTheme }: HeaderProps) {
               )}
             </div>
 
-            <NavLink href={`/${locale}/ai-tools`}>{t('nav.aiTools')}</NavLink>
             <NavLink href={`/${locale}/about`}>{t('nav.about')}</NavLink>
           </nav>
 
@@ -150,10 +149,6 @@ export default function Header({ locale, theme, onToggleTheme }: HeaderProps) {
                 <span>{tool.icon}</span> {t(`nav.${tool.key}`)}
               </Link>
             ))}
-            <Link href={`/${locale}/ai-tools`} onClick={() => setMenuOpen(false)}
-              style={{ display: 'block', padding: '12px 4px', textDecoration: 'none', color: 'var(--text-2)', fontSize: 15 }}>
-              🤖 {t('nav.aiTools')}
-            </Link>
             <Link href={`/${locale}/about`} onClick={() => setMenuOpen(false)}
               style={{ display: 'block', padding: '12px 4px', textDecoration: 'none', color: 'var(--text-2)', fontSize: 15 }}>
               ℹ️ {t('nav.about')}

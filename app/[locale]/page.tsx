@@ -9,12 +9,12 @@ import { buildItemListSchema, buildWebsiteSchema } from '@/lib/structured-data';
 const homePageContent = {
   en: {
     title: 'Toolzee – Free Online Tools',
-    description: 'Free tools for images, QR codes, and text. Image tools run in your browser, while text generation is handled by our provider when requested.',
+    description: 'Free browser-based tools for image compression, image conversion, image resizing, and QR code generation.',
     toolListLabel: 'Toolzee tools',
   },
   ar: {
     title: 'Toolzee – أدوات مجانية عبر الإنترنت',
-    description: 'أدوات مجانية للصور وQR والنصوص. أدوات الصور تعمل داخل المتصفح، بينما يتم توليد النصوص عبر مزودنا عند الطلب.',
+    description: 'أدوات مجانية تعمل عبر المتصفح لضغط الصور وتحويلها وتغيير حجمها وإنشاء رموز QR.',
     toolListLabel: 'أدوات Toolzee',
   },
 } as const;
@@ -32,12 +32,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 const toolCards = [
-  { key: 'compress', href: 'compress-image', icon: '⚡', gradient: 'linear-gradient(135deg,#6c63ff22,#a78bfa11)' },
-  { key: 'convert', href: 'convert-image', icon: '🔄', gradient: 'linear-gradient(135deg,#22c55e22,#16a34a11)' },
-  { key: 'resize', href: 'resize-image', icon: '📐', gradient: 'linear-gradient(135deg,#f9731622,#ea580c11)' },
-  { key: 'qr', href: 'qr-generator', icon: '📱', gradient: 'linear-gradient(135deg,#3b82f622,#1d4ed811)' },
-  { key: 'aiEnhancer', href: 'ai-tools', icon: '✨', gradient: 'linear-gradient(135deg,#ec489922,#be185d11)' },
-  { key: 'aiText', href: 'ai-tools', icon: '🤖', gradient: 'linear-gradient(135deg,#8b5cf622,#6d28d911)' },
+  { key: 'compress', href: 'compress-image', icon: '⚡', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 22%, transparent), color-mix(in srgb, var(--accent-2) 7%, transparent))' },
+  { key: 'convert', href: 'convert-image', icon: '🔄', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, transparent), color-mix(in srgb, var(--accent-2) 5%, transparent))' },
+  { key: 'resize', href: 'resize-image', icon: '📐', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 18%, transparent), color-mix(in srgb, var(--accent) 5%, transparent))' },
+  { key: 'qr', href: 'qr-generator', icon: '📱', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 20%, transparent), color-mix(in srgb, var(--surface-2) 70%, transparent))' },
 ];
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
@@ -52,13 +50,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const features = locale === 'ar'
     ? [
         { icon: '🖼️', title: 'أدوات الصور محلية', desc: 'الضغط والتحويل وتغيير الحجم وتوليد QR تعمل مباشرة داخل متصفحك.' },
-        { icon: '✍️', title: 'النصوص عبر مزود خارجي', desc: 'ميزة توليد النصوص ترسل الطلب فقط عند استخدامها للحصول على النتيجة.' },
-        { icon: '📢', title: 'مجاني ومدعوم بالإعلانات', desc: 'نهدف إلى إبقاء الأدوات مجانية عبر إعلانات واضحة وغير مضللة.' },
+        { icon: '🔒', title: 'بدون حساب', desc: 'يمكنك استخدام الأدوات الأساسية فوراً دون إنشاء حساب أو رفع ملفات الصور إلى خادمنا.' },
+        { icon: '📢', title: 'مجاني ومدعوم بالإعلانات', desc: 'تبقى الأدوات الأساسية مجانية عبر إعلانات واضحة وغير مضللة.' },
       ]
     : [
         { icon: '🖼️', title: 'Browser-based image tools', desc: 'Compression, conversion, resizing, and QR generation happen directly in your browser.' },
-        { icon: '✍️', title: 'Text uses an external provider', desc: 'The text generator sends your prompt only when you choose to generate AI content.' },
-        { icon: '📢', title: 'Free and ad-supported', desc: 'We plan to keep the core tools free through clearly labeled ads.' },
+        { icon: '🔒', title: 'No account needed', desc: 'Use the core tools immediately without creating an account or uploading image files to our server.' },
+        { icon: '📢', title: 'Free and ad-supported', desc: 'The core tools stay free through clearly labeled ads.' },
       ];
 
   return (
@@ -77,7 +75,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div style={{
           position: 'absolute', top: '-100px', left: '50%', transform: 'translateX(-50%)',
           width: 600, height: 600, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(108,99,255,0.12) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, var(--accent-soft) 0%, transparent 70%)',
           pointerEvents: 'none',
         }} />
 
@@ -85,7 +83,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
             padding: '6px 16px', borderRadius: 100,
-            background: 'rgba(108,99,255,0.12)', border: '1px solid rgba(108,99,255,0.3)',
+            background: 'var(--accent-soft)', border: '1px solid var(--accent-border)',
             fontSize: 13, color: 'var(--accent-2)', marginBottom: 28, fontWeight: 500,
           }}>
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block' }} />

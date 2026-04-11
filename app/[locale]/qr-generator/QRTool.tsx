@@ -13,7 +13,7 @@ export default function QRTool() {
   const note = useTranslations('supportNote');
   const [text, setText] = useState(getSiteUrl());
   const [size, setSize] = useState(300);
-  const [fgColor, setFgColor] = useState('#6c63ff');
+  const [fgColor, setFgColor] = useState('#171006');
   const [bgColor, setBgColor] = useState('#ffffff');
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [generating, setGenerating] = useState(false);

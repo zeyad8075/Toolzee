@@ -22,12 +22,12 @@ const content = {
         title: 'Response expectations',
         paragraphs: [
           'We may not be able to reply instantly, but we will review messages related to broken functionality, policy questions, and abuse reports.',
-          'If the site adds new support channels later, they will be listed here.',
+          'Use the email below as the primary public contact for Toolzee.',
         ],
       },
     ],
     emailLabel: 'Primary contact',
-    emailNote: 'Set NEXT_PUBLIC_CONTACT_EMAIL before launch if you want a different public inbox.',
+    emailNote: 'We use this inbox for support, privacy questions, and reports about broken functionality.',
   },
   ar: {
     eyebrow: 'اتصل بنا',
@@ -47,12 +47,12 @@ const content = {
         title: 'توقعات الرد',
         paragraphs: [
           'قد لا نتمكن من الرد فوراً، لكننا سنراجع الرسائل المتعلقة بالأعطال والأسئلة المتعلقة بالسياسات وتقارير الإساءة.',
-          'إذا أضيفت قنوات دعم أخرى مستقبلاً، فسيتم عرضها هنا.',
+          'استخدم البريد أدناه كوسيلة التواصل العامة الأساسية مع Toolzee.',
         ],
       },
     ],
     emailLabel: 'بريد التواصل',
-    emailNote: 'عيّن NEXT_PUBLIC_CONTACT_EMAIL قبل الإطلاق إذا كنت تريد بريداً عاماً مختلفاً.',
+    emailNote: 'نستخدم هذا البريد للدعم وأسئلة الخصوصية والتبليغ عن أي أعطال في الموقع.',
   },
 } as const;
 
@@ -92,7 +92,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
           padding: '12px 18px',
           borderRadius: 10,
           background: 'var(--accent)',
-          color: 'white',
+          color: 'var(--accent-contrast)',
           textDecoration: 'none',
           fontWeight: 700,
           fontSize: 14,

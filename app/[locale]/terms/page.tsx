@@ -20,15 +20,15 @@ const content = {
       {
         title: 'Your files and prompts',
         paragraphs: [
-          'Image tools are intended to process files locally in your browser. The AI text feature sends prompts to our provider when used.',
-          'Do not upload or submit material that you do not have the right to use, or sensitive information that should not be shared with third parties.',
+          'Image and QR tools are intended to process files or inputs locally in your browser whenever possible.',
+          'Do not upload or submit material that you do not have the right to use, or sensitive information that should not be processed through online tools.',
         ],
       },
       {
         title: 'Availability and changes',
         paragraphs: [
-          'We may update, pause, or remove parts of Toolzee as the product evolves. Features may change without notice, especially during early releases.',
-          'If we introduce paid products or public APIs later, the site and legal pages will be updated to reflect that change.',
+          'We may update, pause, or remove parts of Toolzee as the product evolves so the tools remain useful and reliable.',
+          'If we introduce paid products or public APIs in the future, the site and legal pages will be updated to reflect that change before those products are offered.',
         ],
       },
       {
@@ -57,15 +57,15 @@ const content = {
       {
         title: 'ملفاتك وطلباتك',
         paragraphs: [
-          'تهدف أدوات الصور إلى معالجة الملفات محلياً داخل متصفحك. أما ميزة النصوص فترسل الطلبات إلى مزودنا عند استخدامها.',
-          'لا تقم برفع أو إرسال مواد لا تملك حق استخدامها، ولا معلومات حساسة لا ينبغي مشاركتها مع جهات خارجية.',
+          'تهدف أدوات الصور وQR إلى معالجة الملفات أو المدخلات محلياً داخل متصفحك كلما أمكن.',
+          'لا تقم برفع أو إرسال مواد لا تملك حق استخدامها، ولا معلومات حساسة لا ينبغي معالجتها عبر أدوات الإنترنت.',
         ],
       },
       {
         title: 'التوفر والتغييرات',
         paragraphs: [
-          'قد نقوم بتحديث أجزاء من Toolzee أو إيقافها أو إزالتها مع تطور المنتج. ويمكن أن تتغير الميزات دون إشعار مسبق، خصوصاً في المراحل المبكرة.',
-          'إذا أضفنا لاحقاً منتجات مدفوعة أو API عاماً فسيتم تحديث الموقع والصفحات القانونية لتعكس ذلك أولاً.',
+          'قد نقوم بتحديث أجزاء من Toolzee أو إيقافها أو إزالتها مع تطور المنتج حتى تبقى الأدوات مفيدة وموثوقة.',
+          'إذا أضفنا مستقبلاً منتجات مدفوعة أو API عاماً فسيتم تحديث الموقع والصفحات القانونية قبل تقديم تلك المنتجات.',
         ],
       },
       {

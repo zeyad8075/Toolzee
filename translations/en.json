@@ -1,7 +1,6 @@
 {
   "nav": {
     "tools": "Tools",
-    "aiTools": "AI Tools",
     "about": "About",
     "compress": "Compress Image",
     "convert": "Convert Image",
@@ -12,7 +11,7 @@
     "badge": "Free Online Tools",
     "title": "Powerful Tools,",
     "titleHighlight": "Zero Friction",
-    "subtitle": "Free online tools for images, QR codes, and text. Image tools run in your browser, and text is generated through our provider only when you request it.",
+    "subtitle": "Free online tools for images and QR codes. Core tools run directly in your browser with no account required.",
     "cta": "Explore Tools",
     "ctaSecondary": "Learn More"
   },
@@ -34,14 +33,6 @@
     "qr": {
       "name": "QR Generator",
       "desc": "Create QR codes for any URL or text"
-    },
-    "aiEnhancer": {
-      "name": "Image Enhancer",
-      "desc": "Upscale and sharpen images in your browser"
-    },
-    "aiText": {
-      "name": "AI Text Generator",
-      "desc": "Generate text with AI assistance"
     }
   },
   "upload": {
@@ -146,33 +137,6 @@
       }
     ]
   },
-  "ai": {
-    "title": "Text & Image Tools",
-    "subtitle": "Browser-based image enhancement plus AI text generation when you need it.",
-    "badges": {
-      "local": "Browser-based",
-      "text": "AI text"
-    },
-    "enhancer": {
-      "title": "Image Enhancer",
-      "desc": "Upscale and sharpen images directly in your browser.",
-      "button": "Enhance Image",
-      "processing": "Enhancing your image...",
-      "done": "Enhancement complete!",
-      "resultNote": "Upscaled 1.5x with browser-based sharpening."
-    },
-    "textGen": {
-      "title": "AI Text Generator",
-      "desc": "Generate short drafts with AI when you need writing help.",
-      "label": "What do you want to write?",
-      "placeholder": "Write a product description for a blue wireless headphone...",
-      "tone": "Tone",
-      "tones": ["Professional", "Casual", "Creative", "Persuasive"],
-      "generate": "Generate Text",
-      "generating": "Generating...",
-      "result": "Generated Text"
-    }
-  },
   "footer": {
     "tagline": "Simple free tools for everyday tasks.",
     "tools": "Tools",
@@ -181,14 +145,14 @@
     "privacy": "Privacy Policy",
     "terms": "Terms of Use",
     "contact": "Contact",
-    "dataNote": "Image tools stay in your browser. Text requests are sent only when you use the AI text feature.",
-    "fundingNote": "Toolzee is designed to stay free through clearly labeled ads when enabled.",
+    "dataNote": "Image and QR tools are designed to run directly in your browser whenever possible.",
+    "fundingNote": "Toolzee stays free through clearly labeled ads when enabled.",
     "rights": "All rights reserved.",
-    "madeWith": "Made with ❤️"
+    "madeWith": "Free browser tools for everyday tasks."
   },
   "supportNote": {
     "title": "Free tools, supported by ads",
-    "body": "Toolzee is built to keep its core tools free through clearly labeled ads. Image tools run in your browser, while text requests are sent to our provider only when you use the AI text feature."
+    "body": "Toolzee keeps its core tools free through clearly labeled ads. Image and QR tools are designed to run directly in your browser whenever possible."
   },
   "ads": {
     "manage": "Privacy settings",

@@ -35,7 +35,7 @@ export default function DropZone({ onFiles, accept, multiple = true, maxSize = 1
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 28, margin: '0 auto 16px',
           transition: 'all 0.2s',
-          ...(isDragActive ? { background: 'rgba(108,99,255,0.15)', borderColor: 'var(--accent)' } : {}),
+          ...(isDragActive ? { background: 'var(--accent-soft)', borderColor: 'var(--accent)' } : {}),
         }}>
           {isDragActive ? '📂' : '📁'}
         </div>
@@ -47,7 +47,7 @@ export default function DropZone({ onFiles, accept, multiple = true, maxSize = 1
         </p>
         <span style={{
           padding: '10px 24px', borderRadius: 10,
-          background: 'var(--accent)', color: 'white',
+          background: 'var(--accent)', color: 'var(--accent-contrast)',
           fontWeight: 600, fontSize: 14, cursor: 'pointer',
         }}>
           {t('browse')}

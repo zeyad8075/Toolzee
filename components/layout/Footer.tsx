@@ -35,7 +35,7 @@ export default function Footer({
                 width: 28, height: 28, borderRadius: 7,
                 background: 'linear-gradient(135deg, var(--accent), var(--accent-2))',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 14, fontWeight: 800, color: 'white',
+                fontSize: 14, fontWeight: 800, color: 'var(--accent-contrast)',
               }}>T</div>
               <span style={{ fontWeight: 800, fontSize: 16, fontFamily: 'var(--font-heading)' }}>Toolzee</span>
             </div>
@@ -54,7 +54,6 @@ export default function Footer({
               { label: nav('convert'), href: 'convert-image' },
               { label: nav('resize'), href: 'resize-image' },
               { label: nav('qr'), href: 'qr-generator' },
-              { label: nav('aiTools'), href: 'ai-tools' },
             ].map(item => (
               <Link key={item.href} href={`/${locale}/${item.href}`}
                 style={{ display: 'block', color: 'var(--text-3)', fontSize: 14, textDecoration: 'none', marginBottom: 10, transition: 'color 0.2s' }}
@@ -107,7 +106,7 @@ export default function Footer({
             © {new Date().getFullYear()} Toolzee. {t('rights')}
           </p>
           <p style={{ color: 'var(--text-3)', fontSize: 13 }}>
-            {t('madeWith')} for the web
+            {t('madeWith')}
           </p>
         </div>
       </div>

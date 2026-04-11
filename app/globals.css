@@ -3,38 +3,44 @@
 :root {
   --font-body-active: var(--font-body);
   --font-heading: var(--font-display);
-  --bg: #0a0a0f;
-  --bg-2: #111118;
-  --bg-3: #1a1a24;
-  --surface: #16161f;
-  --surface-2: #1e1e2a;
-  --border: rgba(255,255,255,0.07);
-  --border-2: rgba(255,255,255,0.12);
-  --text: #f0f0f8;
-  --text-2: #9090a8;
-  --text-3: #5a5a78;
-  --accent: #6c63ff;
-  --accent-2: #a78bfa;
-  --accent-glow: rgba(108,99,255,0.3);
+  --bg: #0d0c08;
+  --bg-2: #14120c;
+  --bg-3: #1e1a10;
+  --surface: #17140d;
+  --surface-2: #211d12;
+  --border: rgba(255,232,177,0.08);
+  --border-2: rgba(255,232,177,0.14);
+  --text: #f6eedb;
+  --text-2: #c8ba96;
+  --text-3: #8a7d5c;
+  --accent: #f4c95d;
+  --accent-2: #ffe08a;
+  --accent-contrast: #171006;
+  --accent-soft: rgba(244,201,93,0.12);
+  --accent-border: rgba(244,201,93,0.26);
+  --accent-glow: rgba(244,201,93,0.24);
   --green: #22c55e;
   --orange: #f97316;
   --red: #ef4444;
 }
 
 [data-theme="light"] {
-  --bg: #f8f8fc;
-  --bg-2: #f0f0f8;
-  --bg-3: #e8e8f4;
-  --surface: #ffffff;
-  --surface-2: #f4f4fc;
-  --border: rgba(0,0,0,0.08);
-  --border-2: rgba(0,0,0,0.14);
-  --text: #0a0a1a;
-  --text-2: #4a4a6a;
-  --text-3: #8a8aaa;
-  --accent: #5b52e8;
-  --accent-2: #7c6cf0;
-  --accent-glow: rgba(91,82,232,0.2);
+  --bg: #fffaf0;
+  --bg-2: #f7eddb;
+  --bg-3: #efe1c2;
+  --surface: #fffdf7;
+  --surface-2: #fff4d8;
+  --border: rgba(43,31,8,0.1);
+  --border-2: rgba(43,31,8,0.16);
+  --text: #18130a;
+  --text-2: #5d4f31;
+  --text-3: #927d52;
+  --accent: #c9911b;
+  --accent-2: #e2b94f;
+  --accent-contrast: #171006;
+  --accent-soft: rgba(201,145,27,0.12);
+  --accent-border: rgba(201,145,27,0.28);
+  --accent-glow: rgba(201,145,27,0.2);
 }
 
 * { box-sizing: border-box; }
@@ -84,7 +90,7 @@ body {
 
 .btn-primary {
   background: var(--accent);
-  color: white;
+  color: var(--accent-contrast);
   transition: all 0.2s;
 }
 
@@ -114,7 +120,7 @@ body {
 
 .dropzone:hover, .dropzone.active {
   border-color: var(--accent);
-  background: rgba(108,99,255,0.05);
+  background: var(--accent-soft);
 }
 
 .progress-bar {

@@ -15,6 +15,12 @@ const tools = [
   { key: 'convert', href: 'convert-image', icon: '🔄' },
   { key: 'resize', href: 'resize-image', icon: '📐' },
   { key: 'qr', href: 'qr-generator', icon: '📱' },
+  { key: 'imageToPdf', href: 'image-to-pdf', icon: '📄' },
+  { key: 'wordCounter', href: 'word-counter', icon: '✍️' },
+  { key: 'passwordGenerator', href: 'password-generator', icon: '🔑' },
+  { key: 'wifiQr', href: 'wifi-qr-code', icon: '📶' },
+  { key: 'whatsappQr', href: 'whatsapp-qr-code', icon: '💬' },
+  { key: 'vcardQr', href: 'vcard-qr-code', icon: '👤' },
 ];
 
 export default function Header({ locale, theme, onToggleTheme }: HeaderProps) {

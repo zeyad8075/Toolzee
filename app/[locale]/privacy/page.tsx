@@ -11,9 +11,10 @@ const content = {
     metaDescription: 'Learn how Toolzee handles browser-based image processing, QR generation, analytics, and ad-supported monetization.',
     sections: [
       {
-        title: 'Image tools and QR generation',
+        title: 'Browser-based tools',
         paragraphs: [
-          'The image compressor, converter, resizer, and QR generator are designed to work locally in your browser. For those tools, your files do not need to be uploaded to our servers to produce a result.',
+          'The image compressor, converter, resizer, QR generators, word counter, password generator, and image-to-PDF tool are designed to work locally in your browser whenever possible.',
+          'For those tools, your files and inputs do not need to be uploaded to our servers to produce a result.',
           'If we change how those tools work in the future, this policy will be updated before that change goes live.',
         ],
       },
@@ -41,9 +42,10 @@ const content = {
     metaDescription: 'تعرّف على كيفية تعامل Toolzee مع معالجة الصور داخل المتصفح وتوليد QR والتحليلات والتمويل عبر الإعلانات.',
     sections: [
       {
-        title: 'أدوات الصور وتوليد QR',
+        title: 'الأدوات التي تعمل داخل المتصفح',
         paragraphs: [
-          'تم تصميم أداة ضغط الصور والتحويل وتغيير الحجم ومولد QR لتعمل محلياً داخل متصفحك. وبالنسبة لهذه الأدوات لا تحتاج ملفاتك إلى الرفع إلى خوادمنا للحصول على النتيجة.',
+          'تم تصميم أداة ضغط الصور والتحويل وتغيير الحجم ومولدات QR وعداد الكلمات ومولد كلمات المرور وأداة تحويل الصور إلى PDF لتعمل محلياً داخل متصفحك كلما أمكن.',
+          'وبالنسبة لهذه الأدوات لا تحتاج ملفاتك أو مدخلاتك إلى الرفع إلى خوادمنا للحصول على النتيجة.',
           'إذا تغيّر أسلوب عمل هذه الأدوات مستقبلاً، فسيتم تحديث هذه السياسة قبل إطلاق التغيير.',
         ],
       },

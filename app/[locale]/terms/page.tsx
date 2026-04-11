@@ -20,7 +20,7 @@ const content = {
       {
         title: 'Your files and prompts',
         paragraphs: [
-          'Image and QR tools are intended to process files or inputs locally in your browser whenever possible.',
+          'Core tools are intended to process files or inputs locally in your browser whenever possible.',
           'Do not upload or submit material that you do not have the right to use, or sensitive information that should not be processed through online tools.',
         ],
       },
@@ -57,7 +57,7 @@ const content = {
       {
         title: 'ملفاتك وطلباتك',
         paragraphs: [
-          'تهدف أدوات الصور وQR إلى معالجة الملفات أو المدخلات محلياً داخل متصفحك كلما أمكن.',
+          'تهدف الأدوات الأساسية إلى معالجة الملفات أو المدخلات محلياً داخل متصفحك كلما أمكن.',
           'لا تقم برفع أو إرسال مواد لا تملك حق استخدامها، ولا معلومات حساسة لا ينبغي معالجتها عبر أدوات الإنترنت.',
         ],
       },

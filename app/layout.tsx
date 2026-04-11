@@ -4,6 +4,8 @@ import "./globals.css";
 import { getGoogleSiteVerification, getSiteUrl, SITE_NAME } from "@/lib/site";
 import Script from "next/script";
 
+const siteDescription = "Free browser-based tools for images, QR codes, text checks, passwords, and PDF tasks.";
+
 const syne = Syne({
   subsets: ["latin"],
   variable: "--font-display",
@@ -24,7 +26,7 @@ const cairo = Cairo({
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: { template: `%s | ${SITE_NAME}`, default: `${SITE_NAME} – Free Online Tools` },
-  description: "Free online tools for images, QR codes, and text. Image tools run in your browser and text is generated only when requested.",
+  description: siteDescription,
   applicationName: SITE_NAME,
   verification: {
     google: getGoogleSiteVerification(),
@@ -33,13 +35,13 @@ export const metadata: Metadata = {
     type: "website",
     siteName: SITE_NAME,
     title: `${SITE_NAME} – Free Online Tools`,
-    description: "Free online tools for images, QR codes, and text. Image tools run in your browser and text is generated only when requested.",
+    description: siteDescription,
     url: getSiteUrl(),
   },
   twitter: {
     card: "summary_large_image",
     title: `${SITE_NAME} – Free Online Tools`,
-    description: "Free online tools for images, QR codes, and text. Image tools run in your browser and text is generated only when requested.",
+    description: siteDescription,
   },
 };
 

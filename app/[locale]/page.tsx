@@ -9,12 +9,12 @@ import { buildItemListSchema, buildWebsiteSchema } from '@/lib/structured-data';
 const homePageContent = {
   en: {
     title: 'Toolzee – Free Online Tools',
-    description: 'Free browser-based tools for image compression, image conversion, image resizing, and QR code generation.',
+    description: 'Free browser-based tools for images, QR codes, text utilities, passwords, and image-to-PDF conversion.',
     toolListLabel: 'Toolzee tools',
   },
   ar: {
     title: 'Toolzee – أدوات مجانية عبر الإنترنت',
-    description: 'أدوات مجانية تعمل عبر المتصفح لضغط الصور وتحويلها وتغيير حجمها وإنشاء رموز QR.',
+    description: 'أدوات مجانية تعمل عبر المتصفح للصور وQR والنصوص وكلمات المرور وتحويل الصور إلى PDF.',
     toolListLabel: 'أدوات Toolzee',
   },
 } as const;
@@ -36,6 +36,12 @@ const toolCards = [
   { key: 'convert', href: 'convert-image', icon: '🔄', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, transparent), color-mix(in srgb, var(--accent-2) 5%, transparent))' },
   { key: 'resize', href: 'resize-image', icon: '📐', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 18%, transparent), color-mix(in srgb, var(--accent) 5%, transparent))' },
   { key: 'qr', href: 'qr-generator', icon: '📱', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 20%, transparent), color-mix(in srgb, var(--surface-2) 70%, transparent))' },
+  { key: 'imageToPdf', href: 'image-to-pdf', icon: '📄', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 20%, transparent), color-mix(in srgb, var(--surface-2) 60%, transparent))' },
+  { key: 'wordCounter', href: 'word-counter', icon: '✍️', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, transparent), color-mix(in srgb, var(--surface-2) 72%, transparent))' },
+  { key: 'passwordGenerator', href: 'password-generator', icon: '🔑', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 16%, transparent), color-mix(in srgb, var(--surface-2) 65%, transparent))' },
+  { key: 'wifiQr', href: 'wifi-qr-code', icon: '📶', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, transparent), color-mix(in srgb, var(--surface-2) 65%, transparent))' },
+  { key: 'whatsappQr', href: 'whatsapp-qr-code', icon: '💬', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 18%, transparent), color-mix(in srgb, var(--surface-2) 70%, transparent))' },
+  { key: 'vcardQr', href: 'vcard-qr-code', icon: '👤', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 15%, transparent), color-mix(in srgb, var(--accent-2) 6%, transparent))' },
 ];
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {

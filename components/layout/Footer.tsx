@@ -54,6 +54,12 @@ export default function Footer({
               { label: nav('convert'), href: 'convert-image' },
               { label: nav('resize'), href: 'resize-image' },
               { label: nav('qr'), href: 'qr-generator' },
+              { label: nav('imageToPdf'), href: 'image-to-pdf' },
+              { label: nav('wordCounter'), href: 'word-counter' },
+              { label: nav('passwordGenerator'), href: 'password-generator' },
+              { label: nav('wifiQr'), href: 'wifi-qr-code' },
+              { label: nav('whatsappQr'), href: 'whatsapp-qr-code' },
+              { label: nav('vcardQr'), href: 'vcard-qr-code' },
             ].map(item => (
               <Link key={item.href} href={`/${locale}/${item.href}`}
                 style={{ display: 'block', color: 'var(--text-3)', fontSize: 14, textDecoration: 'none', marginBottom: 10, transition: 'color 0.2s' }}

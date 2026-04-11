@@ -5,13 +5,19 @@
     "compress": "Compress Image",
     "convert": "Convert Image",
     "resize": "Resize Image",
-    "qr": "QR Generator"
+    "qr": "QR Generator",
+    "imageToPdf": "Image to PDF",
+    "wordCounter": "Word Counter",
+    "passwordGenerator": "Password Generator",
+    "wifiQr": "WiFi QR Code",
+    "whatsappQr": "WhatsApp QR Code",
+    "vcardQr": "vCard QR Code"
   },
   "hero": {
     "badge": "Free Online Tools",
     "title": "Powerful Tools,",
     "titleHighlight": "Zero Friction",
-    "subtitle": "Free online tools for images and QR codes. Core tools run directly in your browser with no account required.",
+    "subtitle": "Free online tools for images, QR codes, text checks, passwords, and PDFs. Core tools run directly in your browser with no account required.",
     "cta": "Explore Tools",
     "ctaSecondary": "Learn More"
   },
@@ -33,6 +39,30 @@
     "qr": {
       "name": "QR Generator",
       "desc": "Create QR codes for any URL or text"
+    },
+    "imageToPdf": {
+      "name": "Image to PDF",
+      "desc": "Combine JPG, PNG, and WebP images into a PDF"
+    },
+    "wordCounter": {
+      "name": "Word Counter",
+      "desc": "Count words, characters, and reading time"
+    },
+    "passwordGenerator": {
+      "name": "Password Generator",
+      "desc": "Create strong random passwords in your browser"
+    },
+    "wifiQr": {
+      "name": "WiFi QR Code",
+      "desc": "Share WiFi network details with a scannable QR code"
+    },
+    "whatsappQr": {
+      "name": "WhatsApp QR Code",
+      "desc": "Create a QR code that opens a WhatsApp chat"
+    },
+    "vcardQr": {
+      "name": "vCard QR Code",
+      "desc": "Turn contact details into a scannable QR code"
     }
   },
   "upload": {
@@ -137,6 +167,186 @@
       }
     ]
   },
+  "imageToPdf": {
+    "title": "Image to PDF Converter Free",
+    "subtitle": "Convert JPG, PNG, and WebP images into one PDF directly in your browser.",
+    "convert": "Create PDF",
+    "download": "Download PDF",
+    "processing": "Creating PDF...",
+    "remove": "Remove",
+    "howTitle": "How to convert images to PDF",
+    "howDesc": "Upload one or more images, keep them in the order you want, then create and download a single PDF file. The conversion runs in your browser.",
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "q": "Do my images upload to a server?",
+        "a": "No. The PDF is created in your browser from the images you select."
+      },
+      {
+        "q": "Which image formats are supported?",
+        "a": "The tool supports common browser-readable formats such as JPG, PNG, and WebP."
+      },
+      {
+        "q": "Can I add multiple images?",
+        "a": "Yes. Upload multiple images and they will be placed into the PDF in the order shown."
+      }
+    ]
+  },
+  "wordCounter": {
+    "title": "Word Counter Free",
+    "subtitle": "Count words, characters, sentences, paragraphs, and estimated reading time instantly.",
+    "label": "Paste or type your text",
+    "placeholder": "Paste your article, essay, social post, or draft here...",
+    "copy": "Copy text",
+    "clear": "Clear",
+    "minutes": "min",
+    "metrics": {
+      "words": "Words",
+      "characters": "Characters",
+      "noSpaces": "Characters without spaces",
+      "sentences": "Sentences",
+      "paragraphs": "Paragraphs",
+      "readingTime": "Reading time"
+    },
+    "howTitle": "How to use the word counter",
+    "howDesc": "Paste your text into the box and the counters update instantly. You can use it for essays, articles, captions, product copy, and SEO snippets.",
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "q": "Is the word counter free?",
+        "a": "Yes. It runs in your browser and does not require an account."
+      },
+      {
+        "q": "Does it count reading time?",
+        "a": "Yes. Reading time is estimated using a simple 200 words per minute baseline."
+      }
+    ]
+  },
+  "passwordGenerator": {
+    "title": "Password Generator Free",
+    "subtitle": "Generate strong random passwords in your browser with custom length and character options.",
+    "empty": "Click Generate password to create a secure password.",
+    "length": "Length",
+    "generate": "Generate password",
+    "copy": "Copy password",
+    "options": {
+      "uppercase": "Include uppercase letters",
+      "numbers": "Include numbers",
+      "symbols": "Include symbols",
+      "ambiguous": "Avoid ambiguous characters"
+    },
+    "howTitle": "How to create a strong password",
+    "howDesc": "Choose a length, include a mix of character types, and generate a password. Longer passwords with varied characters are usually stronger.",
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "q": "Does Toolzee store generated passwords?",
+        "a": "No. Passwords are generated in your browser and are not sent to our server."
+      },
+      {
+        "q": "What length should I use?",
+        "a": "A length of 16 characters or more is a good starting point for many everyday accounts."
+      }
+    ]
+  },
+  "qrSpecial": {
+    "wifi": {
+      "title": "WiFi QR Code Generator Free",
+      "subtitle": "Create a QR code for your WiFi network so guests can connect without typing the password.",
+      "size": "Size",
+      "download": "Download WiFi QR Code",
+      "empty": "Enter a network name to preview the QR code.",
+      "alt": "WiFi QR code",
+      "fields": {
+        "ssid": "Network name",
+        "password": "Password",
+        "encryption": "Security type",
+        "noPassword": "No password",
+        "hidden": "Hidden network"
+      },
+      "placeholders": {
+        "ssid": "My WiFi Network",
+        "password": "WiFi password"
+      },
+      "howTitle": "How to make a WiFi QR code",
+      "howDesc": "Enter your network name, password, and security type. Guests can scan the QR code to connect on supported devices.",
+      "faqTitle": "Frequently Asked Questions",
+      "faq": [
+        {
+          "q": "Does this share my WiFi password online?",
+          "a": "No. The QR code is generated in your browser and the password stays inside the code you download."
+        },
+        {
+          "q": "Will it work on phones?",
+          "a": "Most modern phones can scan WiFi QR codes from the camera app or QR scanner."
+        }
+      ]
+    },
+    "whatsapp": {
+      "title": "WhatsApp QR Code Generator Free",
+      "subtitle": "Create a QR code that opens a WhatsApp chat with your number and optional message.",
+      "size": "Size",
+      "download": "Download WhatsApp QR Code",
+      "empty": "Enter a WhatsApp number to preview the QR code.",
+      "alt": "WhatsApp QR code",
+      "fields": {
+        "phone": "WhatsApp number with country code",
+        "message": "Optional message"
+      },
+      "placeholders": {
+        "phone": "15551234567",
+        "message": "Hello, I would like to contact you."
+      },
+      "howTitle": "How to make a WhatsApp QR code",
+      "howDesc": "Enter a phone number with country code and an optional message. The QR code opens a WhatsApp chat link when scanned.",
+      "faqTitle": "Frequently Asked Questions",
+      "faq": [
+        {
+          "q": "Do I need to include the country code?",
+          "a": "Yes. Use digits only with the country code so WhatsApp can open the correct chat."
+        },
+        {
+          "q": "Can I add a prefilled message?",
+          "a": "Yes. Add a message and it will be included in the WhatsApp chat link."
+        }
+      ]
+    },
+    "vcard": {
+      "title": "vCard QR Code Generator Free",
+      "subtitle": "Create a QR code for contact details such as name, phone, email, company, and website.",
+      "size": "Size",
+      "download": "Download vCard QR Code",
+      "empty": "Enter at least a name, phone, or email to preview the QR code.",
+      "alt": "vCard QR code",
+      "fields": {
+        "name": "Full name",
+        "company": "Company",
+        "phone": "Phone",
+        "email": "Email",
+        "website": "Website"
+      },
+      "placeholders": {
+        "name": "Alex Morgan",
+        "company": "Company name",
+        "phone": "+1 555 123 4567",
+        "email": "alex@example.com",
+        "website": "https://example.com"
+      },
+      "howTitle": "How to make a vCard QR code",
+      "howDesc": "Fill in the contact details you want to share. When someone scans the QR code, supported devices can save the details as a contact.",
+      "faqTitle": "Frequently Asked Questions",
+      "faq": [
+        {
+          "q": "What is a vCard QR code?",
+          "a": "It is a QR code that stores contact details in a format many phones can save as a contact."
+        },
+        {
+          "q": "Do I need to fill every field?",
+          "a": "No. Add only the details you want to include."
+        }
+      ]
+    }
+  },
   "footer": {
     "tagline": "Simple free tools for everyday tasks.",
     "tools": "Tools",
@@ -145,14 +355,14 @@
     "privacy": "Privacy Policy",
     "terms": "Terms of Use",
     "contact": "Contact",
-    "dataNote": "Image and QR tools are designed to run directly in your browser whenever possible.",
+    "dataNote": "Core tools are designed to run directly in your browser whenever possible.",
     "fundingNote": "Toolzee stays free through clearly labeled ads when enabled.",
     "rights": "All rights reserved.",
     "madeWith": "Free browser tools for everyday tasks."
   },
   "supportNote": {
     "title": "Free tools, supported by ads",
-    "body": "Toolzee keeps its core tools free through clearly labeled ads. Image and QR tools are designed to run directly in your browser whenever possible."
+    "body": "Toolzee keeps its core tools free through clearly labeled ads. The tools are designed to run directly in your browser whenever possible."
   },
   "ads": {
     "manage": "Privacy settings",

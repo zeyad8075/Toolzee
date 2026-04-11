@@ -7,21 +7,21 @@ const content = {
   en: {
     eyebrow: 'About Toolzee',
     title: 'Free online tools for everyday work',
-    intro: 'Toolzee is a lightweight collection of browser-friendly tools for images and QR codes. We focus on fast workflows, clear UX, and honest product messaging.',
+    intro: 'Toolzee is a lightweight collection of browser-friendly tools for images, QR codes, text checks, passwords, and PDF tasks. We focus on fast workflows, clear UX, and honest product messaging.',
     metaTitle: 'About Toolzee',
     metaDescription: 'Learn what Toolzee offers, how its browser-based tools work, and how the service stays free.',
     sections: [
       {
         title: 'What Toolzee offers',
         paragraphs: [
-          'Toolzee is built for quick tasks: compressing images, converting image formats, resizing images, and generating QR codes.',
+          'Toolzee is built for quick tasks: compressing images, converting image formats, resizing images, generating QR codes, counting text, creating passwords, and turning images into PDFs.',
           'We want the tools to feel simple enough for casual use while still being dependable for day-to-day work.',
         ],
       },
       {
         title: 'How the tools work',
         paragraphs: [
-          'Our image tools and QR generator run directly in your browser whenever possible, so your files do not need to be uploaded for those features.',
+          'Our core tools run directly in your browser whenever possible, so your files and inputs do not need to be uploaded for those features.',
           'The result is created on your device for the core tools, which keeps the workflow fast and simple.',
         ],
       },
@@ -39,21 +39,21 @@ const content = {
   ar: {
     eyebrow: 'حول Toolzee',
     title: 'أدوات مجانية للمهام اليومية عبر الإنترنت',
-    intro: 'Toolzee عبارة عن مجموعة خفيفة من الأدوات المناسبة للمتصفح للصور ورموز QR. نركز على السرعة والوضوح والرسائل الصادقة للمستخدم.',
+    intro: 'Toolzee عبارة عن مجموعة خفيفة من الأدوات المناسبة للمتصفح للصور ورموز QR وفحص النصوص وكلمات المرور ومهام PDF. نركز على السرعة والوضوح والرسائل الصادقة للمستخدم.',
     metaTitle: 'حول Toolzee',
     metaDescription: 'تعرّف على ما يقدمه Toolzee وكيف تعمل أدواته داخل المتصفح وكيف تبقى الخدمة مجانية.',
     sections: [
       {
         title: 'ما الذي يقدمه Toolzee',
         paragraphs: [
-          'تم تصميم Toolzee للمهام السريعة مثل ضغط الصور وتحويلها وتغيير حجمها وإنشاء رموز QR.',
+          'تم تصميم Toolzee للمهام السريعة مثل ضغط الصور وتحويلها وتغيير حجمها وإنشاء رموز QR وعد الكلمات وإنشاء كلمات المرور وتحويل الصور إلى PDF.',
           'نريد أن تكون الأدوات سهلة للاستخدام السريع، وفي الوقت نفسه موثوقة للأعمال اليومية.',
         ],
       },
       {
         title: 'كيف تعمل الأدوات',
         paragraphs: [
-          'أدوات الصور ومولد QR تعمل مباشرة داخل متصفحك كلما أمكن، لذلك لا تحتاج ملفاتك إلى الرفع لاستخدام هذه الميزات.',
+          'الأدوات الأساسية تعمل مباشرة داخل متصفحك كلما أمكن، لذلك لا تحتاج ملفاتك أو مدخلاتك إلى الرفع لاستخدام هذه الميزات.',
           'يتم إنشاء النتيجة على جهازك في الأدوات الأساسية، مما يجعل الاستخدام سريعاً وبسيطاً.',
         ],
       },

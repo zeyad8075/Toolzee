@@ -50,7 +50,7 @@ function ensureAdSenseScript(clientId: string): Promise<void> {
   adSenseLoadPromise = new Promise((resolve, reject) => {
     const existing = document.getElementById(ADSENSE_SCRIPT_ID) as HTMLScriptElement | null;
 
-    if (existing?.dataset.loaded === 'true') {
+    if (existing) {
       resolve();
       return;
     }

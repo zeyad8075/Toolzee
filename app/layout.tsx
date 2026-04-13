@@ -49,6 +49,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html suppressHydrationWarning className={`${syne.variable} ${dmSans.variable} ${cairo.variable}`}>
       <head>
+        <script
+          id="toolzee-adsense-script"
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3773949584185719"
+          crossOrigin="anonymous"
+        />
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-TW545XMYG3"

@@ -9,9 +9,18 @@ interface DropZoneProps {
   accept?: Record<string, string[]>;
   multiple?: boolean;
   maxSize?: number;
+  supportsLabel?: string;
+  maxSizeLabel?: string;
 }
 
-export default function DropZone({ onFiles, accept, multiple = true, maxSize = 10 * 1024 * 1024 }: DropZoneProps) {
+export default function DropZone({
+  onFiles,
+  accept,
+  multiple = true,
+  maxSize = 10 * 1024 * 1024,
+  supportsLabel,
+  maxSizeLabel,
+}: DropZoneProps) {
   const t = useTranslations('upload');
 
   const onDrop = useCallback((accepted: File[]) => {
@@ -54,7 +63,7 @@ export default function DropZone({ onFiles, accept, multiple = true, maxSize = 1
         </span>
       </div>
       <p style={{ color: 'var(--text-3)', fontSize: 12, marginTop: 16 }}>
-        {t('supports')} · {t('maxSize')}
+        {supportsLabel ?? t('supports')} · {maxSizeLabel ?? t('maxSize')}
       </p>
     </div>
   );

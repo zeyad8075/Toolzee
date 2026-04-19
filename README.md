@@ -19,6 +19,10 @@ Open http://localhost:3000 → auto-redirects to /en
 - **Image Converter** `/convert-image` – JPG ↔ PNG ↔ WebP in-browser
 - **Image Resizer** `/resize-image` – Pixel dimensions or percentage, aspect ratio lock
 - **QR Generator** `/qr-generator` – Custom color QR codes, instant PNG download
+- **Merge PDF** `/merge-pdf` – Combine multiple PDF files in-browser
+- **Split PDF** `/split-pdf` – Extract page ranges or split every page into separate PDFs
+- **Compress PDF** `/compress-pdf` – Re-save PDFs with compact object streams
+- **PDF to Image** `/pdf-to-image` – Convert PDF pages into PNG images in a ZIP
 - **Image Enhancer** `/ai-tools` – Browser-based 1.5× upscale + sharpening
 - **AI Text Generator** `/ai-tools` – Uses Anthropic when configured
 

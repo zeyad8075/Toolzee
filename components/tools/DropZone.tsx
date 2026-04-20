@@ -3,6 +3,7 @@
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useTranslations } from 'next-intl';
+import { FileUp, FolderOpen } from 'lucide-react';
 
 interface DropZoneProps {
   onFiles: (files: File[]) => void;
@@ -46,10 +47,10 @@ export default function DropZone({
           transition: 'all 0.2s',
           ...(isDragActive ? { background: 'var(--accent-soft)', borderColor: 'var(--accent)' } : {}),
         }}>
-          {isDragActive ? '📂' : '📁'}
+          {isDragActive ? <FileUp aria-hidden="true" size={28} /> : <FolderOpen aria-hidden="true" size={28} />}
         </div>
         <p style={{ fontWeight: 600, fontSize: 16, marginBottom: 6 }}>
-          {isDragActive ? '📂 Drop files here' : t('drag')}
+          {isDragActive ? 'Drop files here' : t('drag')}
         </p>
         <p style={{ color: 'var(--text-3)', fontSize: 13, marginBottom: 12 }}>
           {t('or')}

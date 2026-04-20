@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { ArrowRight, ImageIcon, Megaphone, ShieldCheck } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import SupportNote from '@/components/content/SupportNote';
 import JsonLd from '@/components/seo/JsonLd';
+import ToolIcon, { type ToolIconKey } from '@/components/tools/ToolIcon';
 import { buildLocalizedMetadata } from '@/lib/metadata';
 import { buildItemListSchema, buildWebsiteSchema } from '@/lib/structured-data';
 
@@ -32,21 +34,34 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 const toolCards = [
-  { key: 'compress', href: 'compress-image', icon: '⚡', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 22%, transparent), color-mix(in srgb, var(--accent-2) 7%, transparent))' },
-  { key: 'convert', href: 'convert-image', icon: '🔄', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, transparent), color-mix(in srgb, var(--accent-2) 5%, transparent))' },
-  { key: 'resize', href: 'resize-image', icon: '📐', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 18%, transparent), color-mix(in srgb, var(--accent) 5%, transparent))' },
-  { key: 'qr', href: 'qr-generator', icon: '📱', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 20%, transparent), color-mix(in srgb, var(--surface-2) 70%, transparent))' },
-  { key: 'imageToPdf', href: 'image-to-pdf', icon: '📄', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 20%, transparent), color-mix(in srgb, var(--surface-2) 60%, transparent))' },
-  { key: 'mergePdf', href: 'merge-pdf', icon: '📎', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, transparent), color-mix(in srgb, var(--surface-2) 68%, transparent))' },
-  { key: 'splitPdf', href: 'split-pdf', icon: '✂️', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 16%, transparent), color-mix(in srgb, var(--surface-2) 68%, transparent))' },
-  { key: 'compressPdf', href: 'compress-pdf', icon: '🗜️', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 14%, transparent), color-mix(in srgb, var(--accent-2) 8%, transparent))' },
-  { key: 'pdfToImage', href: 'pdf-to-image', icon: '🖼️', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 18%, transparent), color-mix(in srgb, var(--surface-2) 72%, transparent))' },
-  { key: 'wordCounter', href: 'word-counter', icon: '✍️', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, transparent), color-mix(in srgb, var(--surface-2) 72%, transparent))' },
-  { key: 'passwordGenerator', href: 'password-generator', icon: '🔑', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 16%, transparent), color-mix(in srgb, var(--surface-2) 65%, transparent))' },
-  { key: 'wifiQr', href: 'wifi-qr-code', icon: '📶', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, transparent), color-mix(in srgb, var(--surface-2) 65%, transparent))' },
-  { key: 'whatsappQr', href: 'whatsapp-qr-code', icon: '💬', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 18%, transparent), color-mix(in srgb, var(--surface-2) 70%, transparent))' },
-  { key: 'vcardQr', href: 'vcard-qr-code', icon: '👤', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 15%, transparent), color-mix(in srgb, var(--accent-2) 6%, transparent))' },
-];
+  { key: 'compress', href: 'compress-image', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 22%, transparent), color-mix(in srgb, var(--accent-2) 7%, transparent))' },
+  { key: 'convert', href: 'convert-image', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, transparent), color-mix(in srgb, var(--accent-2) 5%, transparent))' },
+  { key: 'resize', href: 'resize-image', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 18%, transparent), color-mix(in srgb, var(--accent) 5%, transparent))' },
+  { key: 'qr', href: 'qr-generator', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 20%, transparent), color-mix(in srgb, var(--surface-2) 70%, transparent))' },
+  { key: 'imageToPdf', href: 'image-to-pdf', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 20%, transparent), color-mix(in srgb, var(--surface-2) 60%, transparent))' },
+  { key: 'mergePdf', href: 'merge-pdf', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, transparent), color-mix(in srgb, var(--surface-2) 68%, transparent))' },
+  { key: 'splitPdf', href: 'split-pdf', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 16%, transparent), color-mix(in srgb, var(--surface-2) 68%, transparent))' },
+  { key: 'compressPdf', href: 'compress-pdf', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 14%, transparent), color-mix(in srgb, var(--accent-2) 8%, transparent))' },
+  { key: 'pdfToImage', href: 'pdf-to-image', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 18%, transparent), color-mix(in srgb, var(--surface-2) 72%, transparent))' },
+  { key: 'wordCounter', href: 'word-counter', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, transparent), color-mix(in srgb, var(--surface-2) 72%, transparent))' },
+  { key: 'passwordGenerator', href: 'password-generator', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 16%, transparent), color-mix(in srgb, var(--surface-2) 65%, transparent))' },
+  { key: 'wifiQr', href: 'wifi-qr-code', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, transparent), color-mix(in srgb, var(--surface-2) 65%, transparent))' },
+  { key: 'whatsappQr', href: 'whatsapp-qr-code', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 18%, transparent), color-mix(in srgb, var(--surface-2) 70%, transparent))' },
+  { key: 'vcardQr', href: 'vcard-qr-code', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 15%, transparent), color-mix(in srgb, var(--accent-2) 6%, transparent))' },
+] satisfies Array<{ key: ToolIconKey; href: string; gradient: string }>;
+
+type FeatureIconKey = 'browserTools' | 'private' | 'ads';
+
+function FeatureIcon({ name }: { name: FeatureIconKey }) {
+  const icons = {
+    browserTools: ImageIcon,
+    private: ShieldCheck,
+    ads: Megaphone,
+  };
+  const Icon = icons[name];
+
+  return <Icon aria-hidden="true" size={24} strokeWidth={2.1} />;
+}
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -57,17 +72,17 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     name: t(`tools.${card.key}.name`),
     path: card.href,
   }));
-  const features = locale === 'ar'
+  const features = (locale === 'ar'
     ? [
-        { icon: '🖼️', title: 'أدوات الصور محلية', desc: 'الضغط والتحويل وتغيير الحجم وتوليد QR تعمل مباشرة داخل متصفحك.' },
-        { icon: '🔒', title: 'بدون حساب', desc: 'يمكنك استخدام الأدوات الأساسية فوراً دون إنشاء حساب أو رفع ملفات الصور إلى خادمنا.' },
-        { icon: '📢', title: 'مجاني ومدعوم بالإعلانات', desc: 'تبقى الأدوات الأساسية مجانية عبر إعلانات واضحة وغير مضللة.' },
+        { icon: 'browserTools', title: 'أدوات الصور محلية', desc: 'الضغط والتحويل وتغيير الحجم وتوليد QR تعمل مباشرة داخل متصفحك.' },
+        { icon: 'private', title: 'بدون حساب', desc: 'يمكنك استخدام الأدوات الأساسية فوراً دون إنشاء حساب أو رفع ملفات الصور إلى خادمنا.' },
+        { icon: 'ads', title: 'مجاني ومدعوم بالإعلانات', desc: 'تبقى الأدوات الأساسية مجانية عبر إعلانات واضحة وغير مضللة.' },
       ]
     : [
-        { icon: '🖼️', title: 'Browser-based image tools', desc: 'Compression, conversion, resizing, and QR generation happen directly in your browser.' },
-        { icon: '🔒', title: 'No account needed', desc: 'Use the core tools immediately without creating an account or uploading image files to our server.' },
-        { icon: '📢', title: 'Free and ad-supported', desc: 'The core tools stay free through clearly labeled ads.' },
-      ];
+        { icon: 'browserTools', title: 'Browser-based image tools', desc: 'Compression, conversion, resizing, and QR generation happen directly in your browser.' },
+        { icon: 'private', title: 'No account needed', desc: 'Use the core tools immediately without creating an account or uploading image files to our server.' },
+        { icon: 'ads', title: 'Free and ad-supported', desc: 'The core tools stay free through clearly labeled ads.' },
+      ]) satisfies Array<{ icon: FeatureIconKey; title: string; desc: string }>;
 
   return (
     <div>
@@ -123,7 +138,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               fontWeight: 700, fontSize: 15, textDecoration: 'none',
               display: 'inline-flex', alignItems: 'center', gap: 8,
             }}>
-              {t('hero.cta')} →
+              {t('hero.cta')} <ArrowRight aria-hidden="true" size={17} />
             </a>
           </div>
         </div>
@@ -144,7 +159,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               background: 'var(--surface)', border: '1px solid var(--border)',
               display: 'flex', alignItems: 'flex-start', gap: 14,
             }}>
-              <span style={{ fontSize: 24 }}>{f.icon}</span>
+              <span style={{ color: 'var(--accent)', flexShrink: 0 }}>
+                <FeatureIcon name={f.icon} />
+              </span>
               <div>
                 <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>{f.title}</div>
                 <div style={{ color: 'var(--text-3)', fontSize: 13, lineHeight: 1.5 }}>{f.desc}</div>
@@ -204,9 +221,9 @@ function ToolCard({
         width: 52, height: 52, borderRadius: 14,
         background: 'var(--surface)', border: '1px solid var(--border)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 24,
+        color: 'var(--accent)',
       }}>
-        {card.icon}
+        <ToolIcon name={card.key} size={24} strokeWidth={2.2} />
       </div>
       <div>
         <h3 style={{ fontWeight: 700, fontSize: 17, marginBottom: 6 }}>
@@ -220,7 +237,7 @@ function ToolCard({
         marginTop: 'auto', fontSize: 13, color: 'var(--accent)',
         fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4,
       }}>
-        {t('common.free')} · {t('common.fast')} →
+        {t('common.free')} · {t('common.fast')} <ArrowRight aria-hidden="true" size={14} />
       </div>
     </Link>
   );

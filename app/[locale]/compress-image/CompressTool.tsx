@@ -3,6 +3,7 @@
 import NextImage from 'next/image';
 import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
+import { Archive, CircleX, Download, LoaderCircle, Zap } from 'lucide-react';
 import DropZone from '@/components/tools/DropZone';
 import SupportNote from '@/components/content/SupportNote';
 import { trackAnalyticsEvent } from '@/lib/analytics';
@@ -144,13 +145,14 @@ export default function CompressTool() {
         <div style={{ marginTop: 24 }}>
           <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
             <button onClick={handleCompress} disabled={processing} className="btn-primary"
-              style={{ padding: '12px 28px', borderRadius: 10, fontWeight: 700, fontSize: 14, border: 'none', cursor: processing ? 'not-allowed' : 'pointer', opacity: processing ? 0.7 : 1 }}>
-              {processing ? t('processing') : `⚡ ${t('quality')} & Compress`}
+              style={{ padding: '12px 28px', borderRadius: 10, fontWeight: 700, fontSize: 14, border: 'none', cursor: processing ? 'not-allowed' : 'pointer', opacity: processing ? 0.7 : 1, display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+              {processing ? <LoaderCircle aria-hidden="true" size={16} /> : <Zap aria-hidden="true" size={16} />}
+              {processing ? t('processing') : `${t('quality')} & Compress`}
             </button>
             {files.some(f => f.compressed) && (
               <button onClick={downloadAll} className="btn-ghost"
-                style={{ padding: '12px 24px', borderRadius: 10, fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
-                📦 {t('downloadAll')}
+                style={{ padding: '12px 24px', borderRadius: 10, fontWeight: 600, fontSize: 14, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                <Archive aria-hidden="true" size={16} /> {t('downloadAll')}
               </button>
             )}
             <button onClick={() => setFiles([])} className="btn-ghost"
@@ -200,15 +202,17 @@ export default function CompressTool() {
                 {/* Status + Download */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   {cf.status === 'processing' && (
-                    <span style={{ color: 'var(--accent)', fontSize: 13 }}>⏳</span>
+                    <LoaderCircle aria-hidden="true" size={16} style={{ color: 'var(--accent)' }} />
                   )}
                   {cf.status === 'error' && (
-                    <span style={{ color: 'var(--red)', fontSize: 13 }}>✗ Error</span>
+                    <span style={{ color: 'var(--red)', fontSize: 13, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                      <CircleX aria-hidden="true" size={16} /> Error
+                    </span>
                   )}
                   {cf.status === 'done' && (
                     <button onClick={() => downloadFile(cf)} className="btn-primary"
-                      style={{ padding: '8px 18px', borderRadius: 8, fontWeight: 600, fontSize: 13, border: 'none', cursor: 'pointer' }}>
-                      ↓ {t('download')}
+                      style={{ padding: '8px 18px', borderRadius: 8, fontWeight: 600, fontSize: 13, border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                      <Download aria-hidden="true" size={15} /> {t('download')}
                     </button>
                   )}
                 </div>

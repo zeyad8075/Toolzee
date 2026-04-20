@@ -3,6 +3,7 @@
 import NextImage from 'next/image';
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { Download, LoaderCircle, QrCode } from 'lucide-react';
 import QRCode from 'qrcode';
 import SupportNote from '@/components/content/SupportNote';
 import { trackAnalyticsEvent } from '@/lib/analytics';
@@ -125,8 +126,9 @@ export default function QRTool() {
 
           <div style={{ display: 'flex', gap: 10 }}>
             <button onClick={generateQR} disabled={generating} className="btn-primary"
-              style={{ flex: 1, padding: '14px', borderRadius: 10, fontWeight: 700, fontSize: 14, border: 'none', cursor: 'pointer' }}>
-              {generating ? '⏳ Generating...' : `📱 ${t('generate')}`}
+              style={{ flex: 1, padding: '14px', borderRadius: 10, fontWeight: 700, fontSize: 14, border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              {generating ? <LoaderCircle aria-hidden="true" size={16} /> : <QrCode aria-hidden="true" size={16} />}
+              {generating ? 'Generating...' : t('generate')}
             </button>
           </div>
         </div>
@@ -145,13 +147,13 @@ export default function QRTool() {
                   boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
                 }} />
                 <button onClick={download} className="btn-primary"
-                  style={{ padding: '12px 32px', borderRadius: 10, fontWeight: 700, fontSize: 14, border: 'none', cursor: 'pointer', width: '100%' }}>
-                  ↓ {t('download')}
+                  style={{ padding: '12px 32px', borderRadius: 10, fontWeight: 700, fontSize: 14, border: 'none', cursor: 'pointer', width: '100%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                  <Download aria-hidden="true" size={16} /> {t('download')}
                 </button>
               </>
             ) : (
               <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-3)', fontSize: 48 }}>
-                📱
+                <QrCode aria-hidden="true" size={52} strokeWidth={1.7} />
               </div>
             )}
           </div>

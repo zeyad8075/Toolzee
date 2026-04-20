@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { ChevronDown, Info, Languages, Menu, Moon, Sun, X } from 'lucide-react';
+import ToolIcon, { type ToolIconKey } from '@/components/tools/ToolIcon';
 
 interface HeaderProps {
   locale: string;
@@ -11,21 +13,21 @@ interface HeaderProps {
 }
 
 const tools = [
-  { key: 'compress', href: 'compress-image', icon: '⚡' },
-  { key: 'convert', href: 'convert-image', icon: '🔄' },
-  { key: 'resize', href: 'resize-image', icon: '📐' },
-  { key: 'qr', href: 'qr-generator', icon: '📱' },
-  { key: 'imageToPdf', href: 'image-to-pdf', icon: '📄' },
-  { key: 'mergePdf', href: 'merge-pdf', icon: '📎' },
-  { key: 'splitPdf', href: 'split-pdf', icon: '✂️' },
-  { key: 'compressPdf', href: 'compress-pdf', icon: '🗜️' },
-  { key: 'pdfToImage', href: 'pdf-to-image', icon: '🖼️' },
-  { key: 'wordCounter', href: 'word-counter', icon: '✍️' },
-  { key: 'passwordGenerator', href: 'password-generator', icon: '🔑' },
-  { key: 'wifiQr', href: 'wifi-qr-code', icon: '📶' },
-  { key: 'whatsappQr', href: 'whatsapp-qr-code', icon: '💬' },
-  { key: 'vcardQr', href: 'vcard-qr-code', icon: '👤' },
-];
+  { key: 'compress', href: 'compress-image' },
+  { key: 'convert', href: 'convert-image' },
+  { key: 'resize', href: 'resize-image' },
+  { key: 'qr', href: 'qr-generator' },
+  { key: 'imageToPdf', href: 'image-to-pdf' },
+  { key: 'mergePdf', href: 'merge-pdf' },
+  { key: 'splitPdf', href: 'split-pdf' },
+  { key: 'compressPdf', href: 'compress-pdf' },
+  { key: 'pdfToImage', href: 'pdf-to-image' },
+  { key: 'wordCounter', href: 'word-counter' },
+  { key: 'passwordGenerator', href: 'password-generator' },
+  { key: 'wifiQr', href: 'wifi-qr-code' },
+  { key: 'whatsappQr', href: 'whatsapp-qr-code' },
+  { key: 'vcardQr', href: 'vcard-qr-code' },
+] satisfies Array<{ key: ToolIconKey; href: string }>;
 
 export default function Header({ locale, theme, onToggleTheme }: HeaderProps) {
   const t = useTranslations();
@@ -69,7 +71,7 @@ export default function Header({ locale, theme, onToggleTheme }: HeaderProps) {
               }}
                 onMouseEnter={e => (e.currentTarget.style.color = 'var(--text)')}
                 onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-2)')}>
-                {t('nav.tools')} <span style={{ fontSize: 10 }}>▼</span>
+                {t('nav.tools')} <ChevronDown aria-hidden="true" size={14} />
               </button>
               {toolsOpen && (
                 <div style={{
@@ -95,7 +97,7 @@ export default function Header({ locale, theme, onToggleTheme }: HeaderProps) {
                         e.currentTarget.style.background = 'transparent';
                         e.currentTarget.style.color = 'var(--text-2)';
                       }}>
-                      <span>{tool.icon}</span>
+                      <ToolIcon name={tool.key} size={17} strokeWidth={2.1} style={{ flexShrink: 0 }} />
                       {t(`nav.${tool.key}`)}
                     </Link>
                   ))}
@@ -112,11 +114,11 @@ export default function Header({ locale, theme, onToggleTheme }: HeaderProps) {
             <button onClick={onToggleTheme} style={{
               width: 38, height: 38, borderRadius: 10,
               background: 'var(--surface)', border: '1px solid var(--border)',
-              cursor: 'pointer', fontSize: 16, display: 'flex',
+              cursor: 'pointer', display: 'flex',
               alignItems: 'center', justifyContent: 'center',
               transition: 'border-color 0.2s',
             }}>
-              {theme === 'dark' ? '☀️' : '🌙'}
+              {theme === 'dark' ? <Sun aria-hidden="true" size={17} /> : <Moon aria-hidden="true" size={17} />}
             </button>
 
             {/* Language switcher */}
@@ -127,17 +129,18 @@ export default function Header({ locale, theme, onToggleTheme }: HeaderProps) {
               fontWeight: 600, transition: 'all 0.2s',
               display: 'flex', alignItems: 'center', gap: 6,
             }}>
-              {locale === 'en' ? '🇸🇦 AR' : '🇺🇸 EN'}
+              <Languages aria-hidden="true" size={15} />
+              {locale === 'en' ? 'AR' : 'EN'}
             </Link>
 
             {/* Mobile menu button */}
             <button onClick={() => setMenuOpen(!menuOpen)} style={{
               width: 38, height: 38, borderRadius: 10,
               background: 'var(--surface)', border: '1px solid var(--border)',
-              cursor: 'pointer', fontSize: 18, display: 'none',
+              cursor: 'pointer', display: 'none',
               alignItems: 'center', justifyContent: 'center',
             }} className="mobile-menu-btn">
-              {menuOpen ? '✕' : '☰'}
+              {menuOpen ? <X aria-hidden="true" size={18} /> : <Menu aria-hidden="true" size={18} />}
             </button>
           </div>
         </div>
@@ -156,12 +159,12 @@ export default function Header({ locale, theme, onToggleTheme }: HeaderProps) {
                   padding: '12px 4px', textDecoration: 'none',
                   color: 'var(--text-2)', fontSize: 15, borderBottom: '1px solid var(--border)',
                 }}>
-                <span>{tool.icon}</span> {t(`nav.${tool.key}`)}
+                <ToolIcon name={tool.key} size={18} strokeWidth={2.1} style={{ flexShrink: 0 }} /> {t(`nav.${tool.key}`)}
               </Link>
             ))}
             <Link href={`/${locale}/about`} onClick={() => setMenuOpen(false)}
-              style={{ display: 'block', padding: '12px 4px', textDecoration: 'none', color: 'var(--text-2)', fontSize: 15 }}>
-              ℹ️ {t('nav.about')}
+              style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 4px', textDecoration: 'none', color: 'var(--text-2)', fontSize: 15 }}>
+              <Info aria-hidden="true" size={18} /> {t('nav.about')}
             </Link>
           </div>
         )}

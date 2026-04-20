@@ -3,6 +3,7 @@
 import NextImage from 'next/image';
 import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
+import { Archive, ArrowRight, Download, LoaderCircle, RefreshCw } from 'lucide-react';
 import DropZone from '@/components/tools/DropZone';
 import SupportNote from '@/components/content/SupportNote';
 import { trackAnalyticsEvent } from '@/lib/analytics';
@@ -128,13 +129,14 @@ export default function ConvertTool() {
         <div style={{ marginTop: 24 }}>
           <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
             <button onClick={handleConvert} disabled={processing} className="btn-primary"
-              style={{ padding: '12px 28px', borderRadius: 10, fontWeight: 700, fontSize: 14, border: 'none', cursor: processing ? 'not-allowed' : 'pointer', opacity: processing ? 0.7 : 1 }}>
-              {processing ? '⏳ Converting...' : `🔄 Convert to ${format.label}`}
+              style={{ padding: '12px 28px', borderRadius: 10, fontWeight: 700, fontSize: 14, border: 'none', cursor: processing ? 'not-allowed' : 'pointer', opacity: processing ? 0.7 : 1, display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+              {processing ? <LoaderCircle aria-hidden="true" size={16} /> : <RefreshCw aria-hidden="true" size={16} />}
+              {processing ? 'Converting...' : `Convert to ${format.label}`}
             </button>
             {files.some(f => f.converted) && (
               <button onClick={downloadAll} className="btn-ghost"
-                style={{ padding: '12px 24px', borderRadius: 10, fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
-                📦 Download All (ZIP)
+                style={{ padding: '12px 24px', borderRadius: 10, fontWeight: 600, fontSize: 14, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                <Archive aria-hidden="true" size={16} /> Download All (ZIP)
               </button>
             )}
             <button onClick={() => setFiles([])} className="btn-ghost"
@@ -150,13 +152,15 @@ export default function ConvertTool() {
                 <div style={{ flex: 1 }}>
                   <p style={{ fontWeight: 600, fontSize: 14, marginBottom: 2 }}>{cf.original.name}</p>
                   <p style={{ fontSize: 12, color: 'var(--text-3)' }}>
-                    → {format.label} · {cf.status === 'done' ? '✓ Ready' : cf.status === 'processing' ? '⏳ Converting...' : cf.status === 'error' ? '✗ Error' : 'Pending'}
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                      <ArrowRight aria-hidden="true" size={13} /> {format.label} · {cf.status === 'done' ? 'Ready' : cf.status === 'processing' ? 'Converting...' : cf.status === 'error' ? 'Error' : 'Pending'}
+                    </span>
                   </p>
                 </div>
                 {cf.status === 'done' && (
                   <button onClick={() => download(cf)} className="btn-primary"
-                    style={{ padding: '8px 18px', borderRadius: 8, fontWeight: 600, fontSize: 13, border: 'none', cursor: 'pointer' }}>
-                    ↓ Download
+                    style={{ padding: '8px 18px', borderRadius: 8, fontWeight: 600, fontSize: 13, border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    <Download aria-hidden="true" size={15} /> Download
                   </button>
                 )}
               </div>

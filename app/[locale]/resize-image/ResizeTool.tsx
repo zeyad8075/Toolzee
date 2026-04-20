@@ -3,6 +3,7 @@
 import NextImage from 'next/image';
 import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
+import { Archive, ArrowRight, Download, LoaderCircle, Scaling } from 'lucide-react';
 import DropZone from '@/components/tools/DropZone';
 import SupportNote from '@/components/content/SupportNote';
 import { trackAnalyticsEvent } from '@/lib/analytics';
@@ -195,13 +196,14 @@ export default function ResizeTool() {
         <div style={{ marginTop: 24 }}>
           <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
             <button onClick={handleResize} disabled={processing} className="btn-primary"
-              style={{ padding: '12px 28px', borderRadius: 10, fontWeight: 700, fontSize: 14, border: 'none', cursor: processing ? 'not-allowed' : 'pointer', opacity: processing ? 0.7 : 1 }}>
-              {processing ? '⏳ Resizing...' : `📐 ${t('resize')}`}
+              style={{ padding: '12px 28px', borderRadius: 10, fontWeight: 700, fontSize: 14, border: 'none', cursor: processing ? 'not-allowed' : 'pointer', opacity: processing ? 0.7 : 1, display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+              {processing ? <LoaderCircle aria-hidden="true" size={16} /> : <Scaling aria-hidden="true" size={16} />}
+              {processing ? 'Resizing...' : t('resize')}
             </button>
             {files.some(f => f.resized) && (
               <button onClick={downloadAll} className="btn-ghost"
-                style={{ padding: '12px 24px', borderRadius: 10, fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
-                📦 Download All (ZIP)
+                style={{ padding: '12px 24px', borderRadius: 10, fontWeight: 600, fontSize: 14, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                <Archive aria-hidden="true" size={16} /> Download All (ZIP)
               </button>
             )}
             <button onClick={() => setFiles([])} className="btn-ghost"
@@ -216,16 +218,20 @@ export default function ResizeTool() {
                 <div style={{ flex: 1 }}>
                   <p style={{ fontWeight: 600, fontSize: 14, marginBottom: 2 }}>{rf.original.name}</p>
                   <p style={{ fontSize: 12, color: 'var(--text-3)' }}>
-                    {rf.origW}×{rf.origH}px → {
-                      byPercent
-                        ? `${Math.round(rf.origW * +percent / 100)}×${Math.round(rf.origH * +percent / 100)}px`
-                        : `${width}×${height}px`
-                    } · {rf.status === 'done' ? '✓ Ready' : rf.status === 'processing' ? '⏳' : rf.status === 'error' ? '✗ Error' : 'Pending'}
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                      {rf.origW}×{rf.origH}px <ArrowRight aria-hidden="true" size={13} /> {
+                        byPercent
+                          ? `${Math.round(rf.origW * +percent / 100)}×${Math.round(rf.origH * +percent / 100)}px`
+                          : `${width}×${height}px`
+                      } · {rf.status === 'done' ? 'Ready' : rf.status === 'processing' ? 'Resizing...' : rf.status === 'error' ? 'Error' : 'Pending'}
+                    </span>
                   </p>
                 </div>
                 {rf.status === 'done' && (
                   <button onClick={() => download(rf)} className="btn-primary"
-                    style={{ padding: '8px 18px', borderRadius: 8, fontWeight: 600, fontSize: 13, border: 'none', cursor: 'pointer' }}>↓ Download</button>
+                    style={{ padding: '8px 18px', borderRadius: 8, fontWeight: 600, fontSize: 13, border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    <Download aria-hidden="true" size={15} /> Download
+                  </button>
                 )}
               </div>
             ))}

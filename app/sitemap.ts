@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/compress-image',
     '/convert-image',
     '/resize-image',
+    '/remove-background',
     '/qr-generator',
     '/image-to-pdf',
     '/merge-pdf',

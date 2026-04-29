@@ -6,6 +6,7 @@
     "compress": "Compress Image",
     "convert": "Convert Image",
     "resize": "Resize Image",
+    "removeBackground": "Remove Background",
     "qr": "QR Generator",
     "imageToPdf": "Image to PDF",
     "mergePdf": "Merge PDF",
@@ -40,6 +41,10 @@
     "resize": {
       "name": "Image Resizer",
       "desc": "Resize to exact dimensions"
+    },
+    "removeBackground": {
+      "name": "Background Remover",
+      "desc": "Remove backgrounds and download transparent PNGs"
     },
     "qr": {
       "name": "QR Generator",
@@ -161,6 +166,36 @@
       {
         "q": "Will resizing reduce quality?",
         "a": "Downscaling is lossless. Upscaling uses bicubic interpolation for the best possible quality."
+      }
+    ]
+  },
+  "removeBackground": {
+    "title": "Remove Image Background Online Free",
+    "subtitle": "Remove backgrounds in your browser, preview the transparent result, and download a PNG.",
+    "supports": "Supports JPG, PNG, and WebP",
+    "privateHint": "The image stays on your device while the browser processes it.",
+    "original": "Original",
+    "result": "Transparent result",
+    "resultPlaceholder": "The transparent preview will appear here.",
+    "remove": "Remove background",
+    "processing": "Removing background...",
+    "download": "Download PNG",
+    "error": "We could not remove the background. Try another image or reload the page.",
+    "howTitle": "How to remove an image background",
+    "howDesc": "Upload one image, run the background remover, then compare the original with the transparent PNG preview before downloading the result.",
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "q": "Do my images upload to a server?",
+        "a": "No. The removal runs in your browser from the file you select."
+      },
+      {
+        "q": "Why is the download a PNG?",
+        "a": "PNG supports transparency, so the removed background stays transparent after download."
+      },
+      {
+        "q": "Which images work best?",
+        "a": "Photos with a clear subject and contrast between foreground and background usually produce the cleanest result."
       }
     ]
   },

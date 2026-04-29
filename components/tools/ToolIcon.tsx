@@ -4,6 +4,7 @@ import {
   Contact,
   FileImage,
   Files,
+  Eraser,
   ImageDown,
   KeyRound,
   LetterText,
@@ -21,6 +22,7 @@ export type ToolIconKey =
   | 'compress'
   | 'convert'
   | 'resize'
+  | 'removeBackground'
   | 'qr'
   | 'imageToPdf'
   | 'mergePdf'
@@ -37,6 +39,7 @@ const icons: Record<ToolIconKey, LucideIcon> = {
   compress: Minimize2,
   convert: RefreshCw,
   resize: Scaling,
+  removeBackground: Eraser,
   qr: QrCode,
   imageToPdf: FileImage,
   mergePdf: Files,

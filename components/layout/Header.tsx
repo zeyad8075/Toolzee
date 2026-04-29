@@ -16,6 +16,7 @@ const tools = [
   { key: 'compress', href: 'compress-image' },
   { key: 'convert', href: 'convert-image' },
   { key: 'resize', href: 'resize-image' },
+  { key: 'removeBackground', href: 'remove-background' },
   { key: 'qr', href: 'qr-generator' },
   { key: 'imageToPdf', href: 'image-to-pdf' },
   { key: 'mergePdf', href: 'merge-pdf' },

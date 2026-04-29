@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import GuideRecommendationPanel from '@/components/content/GuideRecommendationPanel';
 import { getTranslations } from 'next-intl/server';
 import JsonLd from '@/components/seo/JsonLd';
 import CompressTool from './CompressTool';
+import { getGuidesBySlugs } from '@/lib/guides';
 import { buildLocalizedMetadata } from '@/lib/metadata';
 import { buildBreadcrumbSchema, buildFaqSchema, buildToolSchema } from '@/lib/structured-data';
 
@@ -37,6 +39,7 @@ export default async function CompressPage({ params }: { params: Promise<{ local
   const page = pageContent[normalizedLocale];
   const t = await getTranslations({ locale: normalizedLocale, namespace: 'compress' });
   const faqs = t.raw('faq') as { q: string; a: string }[];
+  const guides = getGuidesBySlugs(normalizedLocale, ['choose-the-right-image-tool', 'prepare-images-for-web-email-and-pdf']);
 
   return (
     <>
@@ -59,6 +62,14 @@ export default async function CompressPage({ params }: { params: Promise<{ local
         ])}
       />
       <CompressTool />
+      <GuideRecommendationPanel
+        locale={normalizedLocale}
+        title={normalizedLocale === 'ar' ? 'دليلان مفيدان قبل ضغط الصور' : 'Useful guides before you compress images'}
+        intro={normalizedLocale === 'ar'
+          ? 'إذا كنت متردداً بين الضغط وتغيير الحجم والتحويل، أو كنت تجهز صوراً للنشر أو البريد، فهذه الأدلة تشرح متى تختار كل مسار.'
+          : 'If you are deciding between compression, resizing, conversion, or general image prep, these guides explain when each workflow makes sense.'}
+        guides={guides}
+      />
     </>
   );
 }

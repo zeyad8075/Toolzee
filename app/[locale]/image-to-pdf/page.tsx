@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import GuideRecommendationPanel from '@/components/content/GuideRecommendationPanel';
 import { getTranslations } from 'next-intl/server';
 import JsonLd from '@/components/seo/JsonLd';
 import ImageToPdfTool from '@/components/tools/ImageToPdfTool';
+import { getGuidesBySlugs } from '@/lib/guides';
 import { buildLocalizedMetadata } from '@/lib/metadata';
 import { buildBreadcrumbSchema, buildFaqSchema, buildToolSchema } from '@/lib/structured-data';
 
@@ -38,6 +40,7 @@ export default async function ImageToPdfPage({ params }: { params: Promise<{ loc
   const page = pageContent[normalizedLocale];
   const t = await getTranslations({ locale: normalizedLocale, namespace: 'imageToPdf' });
   const faqs = t.raw('faq') as { q: string; a: string }[];
+  const guides = getGuidesBySlugs(normalizedLocale, ['choose-the-right-image-tool', 'prepare-images-for-web-email-and-pdf']);
 
   return (
     <>
@@ -60,6 +63,14 @@ export default async function ImageToPdfPage({ params }: { params: Promise<{ loc
         ])}
       />
       <ImageToPdfTool />
+      <GuideRecommendationPanel
+        locale={normalizedLocale}
+        title={normalizedLocale === 'ar' ? 'جهّز الصور قبل تحويلها إلى PDF' : 'Prepare the images before turning them into a PDF'}
+        intro={normalizedLocale === 'ar'
+          ? 'عندما تكون الصور منظفة ومقاسة ومضبوطة التنسيق مسبقاً، يكون ملف PDF النهائي أخف وأسهل في المشاركة. هذه الأدلة تشرح كيف تصل إلى ذلك.'
+          : 'When images are cleaned up, sized sensibly, and formatted well first, the final PDF is easier to share. These guides walk through that prep work.'}
+        guides={guides}
+      />
     </>
   );
 }

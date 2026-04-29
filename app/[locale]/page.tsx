@@ -5,6 +5,7 @@ import { getTranslations } from 'next-intl/server';
 import SupportNote from '@/components/content/SupportNote';
 import JsonLd from '@/components/seo/JsonLd';
 import ToolIcon, { type ToolIconKey } from '@/components/tools/ToolIcon';
+import { getGuidesForLocale } from '@/lib/guides';
 import { buildLocalizedMetadata } from '@/lib/metadata';
 import { buildItemListSchema, buildWebsiteSchema } from '@/lib/structured-data';
 
@@ -50,6 +51,127 @@ const toolCards = [
   { key: 'vcardQr', href: 'vcard-qr-code', gradient: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 15%, transparent), color-mix(in srgb, var(--accent-2) 6%, transparent))' },
 ] satisfies Array<{ key: ToolIconKey; href: string; gradient: string }>;
 
+const homeEditorialContent = {
+  en: {
+    decisionTitle: 'Choose the right workflow first',
+    decisionIntro: 'Most file tasks become easier when you decide what outcome you need before opening a tool. These quick paths help visitors understand which workflow actually fits the job.',
+    decisionCards: [
+      {
+        title: 'Choosing the right image workflow',
+        desc: 'Compression, resizing, conversion, and image-to-PDF solve different problems. Start with the destination, then pick the tool.',
+        href: 'guides/choose-the-right-image-tool',
+        cta: 'Read image guide',
+      },
+      {
+        title: 'Handling PDFs without extra software',
+        desc: 'Merge packets, extract the right pages, reduce heavy files, or export visual previews when review is the goal.',
+        href: 'guides/practical-pdf-workflows',
+        cta: 'Read PDF guide',
+      },
+      {
+        title: 'Making QR codes that scan reliably',
+        desc: 'Choose the right QR type, keep the payload clean, and test the final size before you print or share it.',
+        href: 'guides/qr-code-best-practices',
+        cta: 'Read QR guide',
+      },
+    ],
+    guidesTitle: 'Original guides that support the tools',
+    guidesIntro: 'The tools are fast, but the site should still help visitors make better decisions. These guides explain tradeoffs, common mistakes, and practical use cases in plain language.',
+    guidesBrowse: 'Browse all guides',
+    trustTitle: 'What makes Toolzee more useful than a bare tool shell',
+    trustIntro: 'A good utility site should not stop at a button and a download. It should explain what the tool does, when to use it, and how to avoid avoidable mistakes.',
+    trustCards: [
+      {
+        title: 'Original supporting content',
+        desc: 'Guides, help copy, and policy pages are written around the actual Toolzee workflows instead of filler text.',
+      },
+      {
+        title: 'Clear public pages',
+        desc: 'About, privacy, terms, and contact information are available from every page so visitors can evaluate the site before using it.',
+      },
+      {
+        title: 'Privacy-aware monetization',
+        desc: 'Google ads and analytics are tied to visitor choice through the site privacy controls instead of loading blindly on first paint.',
+      },
+    ],
+    toolNotes: {
+      compress: 'Best for website uploads, product photos, and email attachments that need smaller file sizes.',
+      convert: 'Helpful when a platform needs JPG, transparency needs PNG, or you want a modern WebP copy.',
+      resize: 'Use before publishing when the image dimensions are much larger than the layout needs.',
+      qr: 'Create simple QR codes for links, landing pages, menus, or short text.',
+      imageToPdf: 'Turn several reference images into one document that is easier to send and store.',
+      mergePdf: 'Combine reports, forms, or signed pages into a single review packet.',
+      splitPdf: 'Pull out the exact pages each recipient actually needs.',
+      compressPdf: 'Shrink PDFs that are awkward to share or upload.',
+      pdfToImage: 'Export pages as images for previews, slides, or thumbnails.',
+      wordCounter: 'Check draft length, character limits, and rough reading time before publishing.',
+      passwordGenerator: 'Generate long random passwords for accounts that need stronger security.',
+      wifiQr: 'Help guests join a network without typing the password manually.',
+      whatsappQr: 'Start chats from posters, receipts, profiles, or support handoffs.',
+      vcardQr: 'Make business cards and event handouts easier to save to a phone.',
+    } satisfies Record<ToolIconKey, string>,
+  },
+  ar: {
+    decisionTitle: 'اختر سير العمل المناسب أولاً',
+    decisionIntro: 'تصبح معظم مهام الملفات أسهل عندما تحدد النتيجة التي تريدها قبل فتح الأداة. تساعد هذه المسارات السريعة الزائر على فهم الأداة المناسبة للمهمة فعلاً.',
+    decisionCards: [
+      {
+        title: 'اختيار مسار الصور المناسب',
+        desc: 'الضغط وتغيير الحجم والتحويل وتحويل الصور إلى PDF تعالج مشاكل مختلفة. ابدأ من الوجهة ثم اختر الأداة.',
+        href: 'guides/choose-the-right-image-tool',
+        cta: 'اقرأ دليل الصور',
+      },
+      {
+        title: 'التعامل مع PDF دون برامج إضافية',
+        desc: 'ادمج الحزم، واستخرج الصفحات المطلوبة، وقلل حجم الملفات الثقيلة، أو حوّل الصفحات إلى صور عندما تكون المراجعة البصرية هي الهدف.',
+        href: 'guides/practical-pdf-workflows',
+        cta: 'اقرأ دليل PDF',
+      },
+      {
+        title: 'إنشاء رموز QR سهلة المسح',
+        desc: 'اختر نوع QR المناسب، واجعل المحتوى نظيفاً، واختبر الحجم النهائي قبل الطباعة أو النشر.',
+        href: 'guides/qr-code-best-practices',
+        cta: 'اقرأ دليل QR',
+      },
+    ],
+    guidesTitle: 'أدلة أصلية تدعم الأدوات',
+    guidesIntro: 'الأدوات سريعة، لكن الموقع يجب أن يساعد الزائر أيضاً على اتخاذ قرار أفضل. تشرح هذه الأدلة المقايضات والأخطاء الشائعة وحالات الاستخدام العملية بلغة واضحة.',
+    guidesBrowse: 'تصفح جميع الأدلة',
+    trustTitle: 'ما الذي يجعل Toolzee أكثر فائدة من مجرد صفحة أداة',
+    trustIntro: 'الموقع الجيد لا يكتفي بزر تنزيل فقط، بل يشرح ما الذي تفعله الأداة ومتى تستخدمها وكيف تتجنب الأخطاء القابلة للتفادي.',
+    trustCards: [
+      {
+        title: 'محتوى داعم أصلي',
+        desc: 'الأدلة ونصوص المساعدة والصفحات التعريفية مكتوبة حول سير العمل الفعلي في Toolzee وليست نصوصاً حشوية.',
+      },
+      {
+        title: 'صفحات عامة واضحة',
+        desc: 'صفحات حول وخصوصية وشروط واتصال متاحة من كل صفحة حتى يتمكن الزائر من تقييم الموقع قبل الاستخدام.',
+      },
+      {
+        title: 'تمويل يراعي الخصوصية',
+        desc: 'إعلانات Google والتحليلات مرتبطة باختيار الزائر من إعدادات الخصوصية بدلاً من تحميلها تلقائياً منذ اللحظة الأولى.',
+      },
+    ],
+    toolNotes: {
+      compress: 'مناسب لرفع الصور إلى المواقع وصور المنتجات ومرفقات البريد التي تحتاج إلى حجم أخف.',
+      convert: 'مفيد عندما تتطلب المنصة JPG أو تحتاج إلى الشفافية مع PNG أو تريد نسخة WebP أحدث.',
+      resize: 'استخدمه قبل النشر عندما تكون أبعاد الصورة أكبر بكثير من حاجة التصميم.',
+      qr: 'أنشئ رموز QR بسيطة للروابط والصفحات المقصودة والقوائم أو النصوص القصيرة.',
+      imageToPdf: 'حوّل عدة صور مرجعية إلى مستند واحد أسهل في الإرسال والحفظ.',
+      mergePdf: 'اجمع التقارير أو النماذج أو الصفحات الموقعة في حزمة مراجعة واحدة.',
+      splitPdf: 'استخرج الصفحات التي يحتاجها كل مستلم فقط.',
+      compressPdf: 'قلل حجم ملفات PDF التي يصعب رفعها أو مشاركتها.',
+      pdfToImage: 'حوّل الصفحات إلى صور لاستخدامها في المعاينات أو العروض أو المصغرات.',
+      wordCounter: 'راجع طول المسودة وحدود الأحرف ووقت القراءة التقريبي قبل النشر.',
+      passwordGenerator: 'أنشئ كلمات مرور طويلة وعشوائية للحسابات التي تحتاج إلى أمان أقوى.',
+      wifiQr: 'ساعد الضيوف على الاتصال بالشبكة دون كتابة كلمة المرور يدوياً.',
+      whatsappQr: 'ابدأ محادثات من الملصقات أو الفواتير أو الصفحات الشخصية أو تحويلات الدعم.',
+      vcardQr: 'اجعل بطاقات العمل والمنشورات أسهل للحفظ كجهة اتصال على الهاتف.',
+    } satisfies Record<ToolIconKey, string>,
+  },
+} as const;
+
 type FeatureIconKey = 'browserTools' | 'private' | 'ads';
 
 function FeatureIcon({ name }: { name: FeatureIconKey }) {
@@ -67,7 +189,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   const normalizedLocale = locale === 'ar' ? 'ar' : 'en';
   const page = homePageContent[normalizedLocale];
+  const editorial = homeEditorialContent[normalizedLocale];
   const t = await getTranslations();
+  const guides = getGuidesForLocale(normalizedLocale);
   const toolList = toolCards.map(card => ({
     name: t(`tools.${card.key}.name`),
     path: card.href,
@@ -171,6 +295,54 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
+      <section style={{ padding: '0 24px 68px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div style={{ maxWidth: 760, marginBottom: 24 }}>
+            <h2 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800, marginBottom: 12, fontFamily: 'var(--font-heading)' }}>
+              {editorial.decisionTitle}
+            </h2>
+            <p style={{ color: 'var(--text-2)', fontSize: 16, lineHeight: 1.8 }}>
+              {editorial.decisionIntro}
+            </p>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: 18,
+          }}>
+            {editorial.decisionCards.map(card => (
+              <Link
+                key={card.href}
+                href={`/${normalizedLocale}/${card.href}`}
+                className="tool-card"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 14,
+                  padding: '22px 20px',
+                  borderRadius: 20,
+                  textDecoration: 'none',
+                }}
+              >
+                <div style={{ color: 'var(--accent)', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  {normalizedLocale === 'ar' ? 'دليل عملي' : 'Practical guide'}
+                </div>
+                <h3 style={{ fontSize: 22, fontWeight: 800, fontFamily: 'var(--font-heading)', lineHeight: 1.25 }}>
+                  {card.title}
+                </h3>
+                <p style={{ color: 'var(--text-2)', fontSize: 15, lineHeight: 1.75, flex: 1 }}>
+                  {card.desc}
+                </p>
+                <div style={{ color: 'var(--accent)', fontSize: 14, fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  {card.cta} <ArrowRight aria-hidden="true" size={15} />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Tools grid */}
       <section id="tools" style={{ padding: '0 24px 80px' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
@@ -188,6 +360,98 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           }}>
             {toolCards.map(card => (
               <ToolCard key={card.key} card={card} locale={locale} t={t} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section style={{ padding: '0 24px 72px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'end', flexWrap: 'wrap', marginBottom: 24 }}>
+            <div style={{ maxWidth: 760 }}>
+              <h2 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800, marginBottom: 12, fontFamily: 'var(--font-heading)' }}>
+                {editorial.guidesTitle}
+              </h2>
+              <p style={{ color: 'var(--text-2)', fontSize: 16, lineHeight: 1.8 }}>
+                {editorial.guidesIntro}
+              </p>
+            </div>
+            <Link href={`/${normalizedLocale}/guides`} className="btn-ghost" style={{
+              textDecoration: 'none',
+              borderRadius: 14,
+              padding: '12px 16px',
+              fontWeight: 700,
+              fontSize: 14,
+            }}>
+              {editorial.guidesBrowse}
+            </Link>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gap: 18,
+          }}>
+            {guides.map(guide => (
+              <Link
+                key={guide.slug}
+                href={`/${normalizedLocale}/guides/${guide.slug}`}
+                className="tool-card"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 12,
+                  padding: '22px 20px',
+                  borderRadius: 20,
+                  textDecoration: 'none',
+                }}
+              >
+                <div style={{ color: 'var(--accent)', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  {guide.category}
+                </div>
+                <h3 style={{ fontSize: 21, fontWeight: 800, fontFamily: 'var(--font-heading)', lineHeight: 1.3 }}>
+                  {guide.title}
+                </h3>
+                <p style={{ color: 'var(--text-2)', fontSize: 15, lineHeight: 1.75, flex: 1 }}>
+                  {guide.description}
+                </p>
+                <div style={{ color: 'var(--text-3)', fontSize: 13 }}>{guide.readTime}</div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section style={{ padding: '0 24px 68px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div style={{ maxWidth: 760, marginBottom: 24 }}>
+            <h2 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800, marginBottom: 12, fontFamily: 'var(--font-heading)' }}>
+              {editorial.trustTitle}
+            </h2>
+            <p style={{ color: 'var(--text-2)', fontSize: 16, lineHeight: 1.8 }}>
+              {editorial.trustIntro}
+            </p>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gap: 18,
+          }}>
+            {editorial.trustCards.map(card => (
+              <div key={card.title} style={{
+                padding: '22px 20px',
+                borderRadius: 20,
+                background: 'var(--surface)',
+                border: '1px solid var(--border)',
+              }}>
+                <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 10, fontFamily: 'var(--font-heading)' }}>
+                  {card.title}
+                </h3>
+                <p style={{ color: 'var(--text-2)', fontSize: 15, lineHeight: 1.75 }}>
+                  {card.desc}
+                </p>
+              </div>
             ))}
           </div>
         </div>
@@ -231,6 +495,9 @@ function ToolCard({
         </h3>
         <p style={{ color: 'var(--text-2)', fontSize: 14, lineHeight: 1.5 }}>
           {t(`tools.${card.key}.desc`)}
+        </p>
+        <p style={{ color: 'var(--text-3)', fontSize: 13, lineHeight: 1.6, marginTop: 10 }}>
+          {homeEditorialContent[(locale === 'ar' ? 'ar' : 'en')].toolNotes[card.key]}
         </p>
       </div>
       <div style={{

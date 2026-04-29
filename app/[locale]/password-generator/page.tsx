@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import GuideRecommendationPanel from '@/components/content/GuideRecommendationPanel';
 import { getTranslations } from 'next-intl/server';
 import JsonLd from '@/components/seo/JsonLd';
 import PasswordGeneratorTool from '@/components/tools/PasswordGeneratorTool';
+import { getGuidesBySlugs } from '@/lib/guides';
 import { buildLocalizedMetadata } from '@/lib/metadata';
 import { buildBreadcrumbSchema, buildFaqSchema, buildToolSchema } from '@/lib/structured-data';
 
@@ -38,6 +40,7 @@ export default async function PasswordGeneratorPage({ params }: { params: Promis
   const page = pageContent[normalizedLocale];
   const t = await getTranslations({ locale: normalizedLocale, namespace: 'passwordGenerator' });
   const faqs = t.raw('faq') as { q: string; a: string }[];
+  const guides = getGuidesBySlugs(normalizedLocale, ['quick-text-checks-and-password-hygiene']);
 
   return (
     <>
@@ -60,6 +63,14 @@ export default async function PasswordGeneratorPage({ params }: { params: Promis
         ])}
       />
       <PasswordGeneratorTool />
+      <GuideRecommendationPanel
+        locale={normalizedLocale}
+        title={normalizedLocale === 'ar' ? 'كلمة المرور القوية تبدأ بالعادات الصحيحة' : 'Strong passwords start with the right habits'}
+        intro={normalizedLocale === 'ar'
+          ? 'هذا الدليل يركز على الطول والتفرد والتخزين الآمن، حتى لا تتحول كلمة المرور القوية إلى مشكلة استخدام يومية.'
+          : 'This guide focuses on length, uniqueness, and safe storage so a strong password also stays practical to use.'}
+        guides={guides}
+      />
     </>
   );
 }

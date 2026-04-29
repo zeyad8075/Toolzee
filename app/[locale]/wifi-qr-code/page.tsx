@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import GuideRecommendationPanel from '@/components/content/GuideRecommendationPanel';
 import { getTranslations } from 'next-intl/server';
 import JsonLd from '@/components/seo/JsonLd';
 import SpecializedQRTool from '@/components/tools/SpecializedQRTool';
+import { getGuidesBySlugs } from '@/lib/guides';
 import { buildLocalizedMetadata } from '@/lib/metadata';
 import { buildBreadcrumbSchema, buildFaqSchema, buildToolSchema } from '@/lib/structured-data';
 
@@ -38,6 +40,7 @@ export default async function WifiQRCodePage({ params }: { params: Promise<{ loc
   const page = pageContent[normalizedLocale];
   const t = await getTranslations({ locale: normalizedLocale, namespace: 'qrSpecial.wifi' });
   const faqs = t.raw('faq') as { q: string; a: string }[];
+  const guides = getGuidesBySlugs(normalizedLocale, ['qr-code-best-practices']);
 
   return (
     <>
@@ -60,6 +63,14 @@ export default async function WifiQRCodePage({ params }: { params: Promise<{ loc
         ])}
       />
       <SpecializedQRTool variant="wifi" />
+      <GuideRecommendationPanel
+        locale={normalizedLocale}
+        title={normalizedLocale === 'ar' ? 'استخدم QR الواي فاي بوضوح وحذر' : 'Use WiFi QR codes clearly and carefully'}
+        intro={normalizedLocale === 'ar'
+          ? 'إذا كنت ستضع رمز الشبكة في مكتب أو متجر أو فعالية، فهذا الدليل يشرح أفضل الممارسات للوضوح وسهولة المسح والتعامل مع الخصوصية.'
+          : 'If you plan to place a network QR code in an office, store, or event, this guide covers scan reliability, clarity, and privacy-minded placement.'}
+        guides={guides}
+      />
     </>
   );
 }

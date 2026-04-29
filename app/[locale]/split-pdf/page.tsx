@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import GuideRecommendationPanel from '@/components/content/GuideRecommendationPanel';
 import { getTranslations } from 'next-intl/server';
 import JsonLd from '@/components/seo/JsonLd';
 import PdfTool from '@/components/tools/PdfTool';
+import { getGuidesBySlugs } from '@/lib/guides';
 import { buildLocalizedMetadata } from '@/lib/metadata';
 import { buildBreadcrumbSchema, buildFaqSchema, buildToolSchema } from '@/lib/structured-data';
 
@@ -38,6 +40,7 @@ export default async function SplitPdfPage({ params }: { params: Promise<{ local
   const page = pageContent[normalizedLocale];
   const t = await getTranslations({ locale: normalizedLocale, namespace: 'pdfTools.splitPdf' });
   const faqs = t.raw('faq') as { q: string; a: string }[];
+  const guides = getGuidesBySlugs(normalizedLocale, ['practical-pdf-workflows']);
 
   return (
     <>
@@ -60,6 +63,14 @@ export default async function SplitPdfPage({ params }: { params: Promise<{ local
         ])}
       />
       <PdfTool mode="splitPdf" />
+      <GuideRecommendationPanel
+        locale={normalizedLocale}
+        title={normalizedLocale === 'ar' ? 'متى يكون التقسيم أفضل من الإرسال الكامل؟' : 'When is splitting better than sending the whole PDF?'}
+        intro={normalizedLocale === 'ar'
+          ? 'يعرض هذا الدليل كيف يساعد التقسيم على التركيز وتقليل المشاركة الزائدة واستخراج الصفحات الصحيحة لكل مستلم.'
+          : 'This guide shows how splitting can improve focus, reduce oversharing, and help you send only the pages each recipient actually needs.'}
+        guides={guides}
+      />
     </>
   );
 }

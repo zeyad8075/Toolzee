@@ -1,6 +1,7 @@
 {
   "nav": {
     "tools": "Tools",
+    "guides": "Guides",
     "about": "About",
     "compress": "Compress Image",
     "convert": "Convert Image",
@@ -472,6 +473,7 @@
     "tagline": "Simple free tools for everyday tasks.",
     "tools": "Tools",
     "company": "Company",
+    "guides": "Guides",
     "about": "About",
     "privacy": "Privacy Policy",
     "terms": "Terms of Use",

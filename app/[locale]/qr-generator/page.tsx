@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import GuideRecommendationPanel from '@/components/content/GuideRecommendationPanel';
 import { getTranslations } from 'next-intl/server';
 import JsonLd from '@/components/seo/JsonLd';
 import QRTool from './QRTool';
+import { getGuidesBySlugs } from '@/lib/guides';
 import { buildLocalizedMetadata } from '@/lib/metadata';
 import { buildBreadcrumbSchema, buildFaqSchema, buildToolSchema } from '@/lib/structured-data';
 
@@ -37,6 +39,7 @@ export default async function QRPage({ params }: { params: Promise<{ locale: str
   const page = pageContent[normalizedLocale];
   const t = await getTranslations({ locale: normalizedLocale, namespace: 'qr' });
   const faqs = t.raw('faq') as { q: string; a: string }[];
+  const guides = getGuidesBySlugs(normalizedLocale, ['qr-code-best-practices']);
 
   return (
     <>
@@ -59,6 +62,14 @@ export default async function QRPage({ params }: { params: Promise<{ locale: str
         ])}
       />
       <QRTool />
+      <GuideRecommendationPanel
+        locale={normalizedLocale}
+        title={normalizedLocale === 'ar' ? 'قبل مشاركة رمز QR' : 'Before you share the QR code'}
+        intro={normalizedLocale === 'ar'
+          ? 'هذا الدليل يركز على الوضوح والتباين والحجم المناسب واختيار نوع المحتوى الذي يجعل الرمز أسهل في المسح والفهم.'
+          : 'This guide focuses on contrast, sizing, context, and payload choices that make a QR code easier to scan and understand.'}
+        guides={guides}
+      />
     </>
   );
 }

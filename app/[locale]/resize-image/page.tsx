@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import GuideRecommendationPanel from '@/components/content/GuideRecommendationPanel';
 import { getTranslations } from 'next-intl/server';
 import JsonLd from '@/components/seo/JsonLd';
 import ResizeTool from './ResizeTool';
+import { getGuidesBySlugs } from '@/lib/guides';
 import { buildLocalizedMetadata } from '@/lib/metadata';
 import { buildBreadcrumbSchema, buildFaqSchema, buildToolSchema } from '@/lib/structured-data';
 
@@ -37,6 +39,7 @@ export default async function ResizePage({ params }: { params: Promise<{ locale:
   const page = pageContent[normalizedLocale];
   const t = await getTranslations({ locale: normalizedLocale, namespace: 'resize' });
   const faqs = t.raw('faq') as { q: string; a: string }[];
+  const guides = getGuidesBySlugs(normalizedLocale, ['choose-the-right-image-tool', 'prepare-images-for-web-email-and-pdf']);
 
   return (
     <>
@@ -59,6 +62,14 @@ export default async function ResizePage({ params }: { params: Promise<{ locale:
         ])}
       />
       <ResizeTool />
+      <GuideRecommendationPanel
+        locale={normalizedLocale}
+        title={normalizedLocale === 'ar' ? 'قبل تغيير الأبعاد' : 'Before you resize the image'}
+        intro={normalizedLocale === 'ar'
+          ? 'إذا كنت غير متأكد مما إذا كانت المشكلة في الأبعاد أم في حجم الملف أو في التنسيق نفسه، فهذه الأدلة تساعدك على اتخاذ القرار بسرعة.'
+          : 'If you are not sure whether the problem is dimensions, file size, or format, these guides help you make that call quickly.'}
+        guides={guides}
+      />
     </>
   );
 }

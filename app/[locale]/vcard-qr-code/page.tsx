@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import GuideRecommendationPanel from '@/components/content/GuideRecommendationPanel';
 import { getTranslations } from 'next-intl/server';
 import JsonLd from '@/components/seo/JsonLd';
 import SpecializedQRTool from '@/components/tools/SpecializedQRTool';
+import { getGuidesBySlugs } from '@/lib/guides';
 import { buildLocalizedMetadata } from '@/lib/metadata';
 import { buildBreadcrumbSchema, buildFaqSchema, buildToolSchema } from '@/lib/structured-data';
 
@@ -38,6 +40,7 @@ export default async function VCardQRCodePage({ params }: { params: Promise<{ lo
   const page = pageContent[normalizedLocale];
   const t = await getTranslations({ locale: normalizedLocale, namespace: 'qrSpecial.vcard' });
   const faqs = t.raw('faq') as { q: string; a: string }[];
+  const guides = getGuidesBySlugs(normalizedLocale, ['qr-code-best-practices']);
 
   return (
     <>
@@ -60,6 +63,14 @@ export default async function VCardQRCodePage({ params }: { params: Promise<{ lo
         ])}
       />
       <SpecializedQRTool variant="vcard" />
+      <GuideRecommendationPanel
+        locale={normalizedLocale}
+        title={normalizedLocale === 'ar' ? 'شارك بيانات التواصل بطريقة أسهل' : 'Share contact details more clearly'}
+        intro={normalizedLocale === 'ar'
+          ? 'يعرض هذا الدليل كيف تختار نوع QR الصحيح وتحافظ على البيانات مختصرة ودقيقة وسهلة الحفظ على الهاتف.'
+          : 'This guide explains how to choose the right QR format, keep the payload clean, and make contact details easier to save on a phone.'}
+        guides={guides}
+      />
     </>
   );
 }

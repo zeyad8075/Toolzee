@@ -103,3 +103,45 @@ export function buildBreadcrumbSchema(locale: SupportedLocale, items: Breadcrumb
     })),
   };
 }
+
+export function buildCollectionPageSchema(
+  locale: SupportedLocale,
+  path: string,
+  name: string,
+  description: string,
+) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name,
+    description,
+    url: getAbsoluteUrl(`/${locale}/${path}`),
+    inLanguage: locale,
+    isPartOf: {
+      '@type': 'WebSite',
+      name: SITE_NAME,
+      url: getAbsoluteUrl(`/${locale}`),
+    },
+  };
+}
+
+export function buildArticleSchema(
+  locale: SupportedLocale,
+  path: string,
+  headline: string,
+  description: string,
+) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline,
+    description,
+    inLanguage: locale,
+    mainEntityOfPage: getAbsoluteUrl(`/${locale}/${path}`),
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_NAME,
+      url: getAbsoluteUrl(`/${locale}`),
+    },
+  };
+}

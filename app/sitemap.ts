@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next';
+import { guideSlugs } from '@/lib/guides';
 import { getAbsoluteUrl } from '@/lib/site';
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -23,6 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/privacy',
     '/terms',
     '/contact',
+    '/guides',
   ];
 
   const urls: MetadataRoute.Sitemap = [];
@@ -34,6 +36,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
         lastModified: new Date(),
         changeFrequency: route === '' ? 'weekly' : 'monthly',
         priority: route === '' ? 1.0 : 0.8,
+      });
+    }
+
+    for (const slug of guideSlugs) {
+      urls.push({
+        url: getAbsoluteUrl(`/${locale}/guides/${slug}`),
+        lastModified: new Date(),
+        changeFrequency: 'monthly',
+        priority: 0.78,
       });
     }
   }

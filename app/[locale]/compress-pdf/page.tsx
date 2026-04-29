@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import GuideRecommendationPanel from '@/components/content/GuideRecommendationPanel';
 import { getTranslations } from 'next-intl/server';
 import JsonLd from '@/components/seo/JsonLd';
 import PdfTool from '@/components/tools/PdfTool';
+import { getGuidesBySlugs } from '@/lib/guides';
 import { buildLocalizedMetadata } from '@/lib/metadata';
 import { buildBreadcrumbSchema, buildFaqSchema, buildToolSchema } from '@/lib/structured-data';
 
@@ -38,6 +40,7 @@ export default async function CompressPdfPage({ params }: { params: Promise<{ lo
   const page = pageContent[normalizedLocale];
   const t = await getTranslations({ locale: normalizedLocale, namespace: 'pdfTools.compressPdf' });
   const faqs = t.raw('faq') as { q: string; a: string }[];
+  const guides = getGuidesBySlugs(normalizedLocale, ['practical-pdf-workflows']);
 
   return (
     <>
@@ -60,6 +63,14 @@ export default async function CompressPdfPage({ params }: { params: Promise<{ lo
         ])}
       />
       <PdfTool mode="compressPdf" />
+      <GuideRecommendationPanel
+        locale={normalizedLocale}
+        title={normalizedLocale === 'ar' ? 'افهم المقايضات قبل ضغط PDF' : 'Understand the tradeoffs before you compress a PDF'}
+        intro={normalizedLocale === 'ar'
+          ? 'إذا كان هدفك هو المشاركة الأسهل لا أصغر ملف ممكن بأي ثمن، فهذا الدليل يوضح كيف تفكر في الضغط وحدوده العملية.'
+          : 'If your goal is easier sharing instead of chasing the tiniest possible file, this guide explains how to think about compression and its practical limits.'}
+        guides={guides}
+      />
     </>
   );
 }

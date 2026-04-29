@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import GuideRecommendationPanel from '@/components/content/GuideRecommendationPanel';
 import { getTranslations } from 'next-intl/server';
 import JsonLd from '@/components/seo/JsonLd';
 import PdfTool from '@/components/tools/PdfTool';
+import { getGuidesBySlugs } from '@/lib/guides';
 import { buildLocalizedMetadata } from '@/lib/metadata';
 import { buildBreadcrumbSchema, buildFaqSchema, buildToolSchema } from '@/lib/structured-data';
 
@@ -38,6 +40,7 @@ export default async function PdfToImagePage({ params }: { params: Promise<{ loc
   const page = pageContent[normalizedLocale];
   const t = await getTranslations({ locale: normalizedLocale, namespace: 'pdfTools.pdfToImage' });
   const faqs = t.raw('faq') as { q: string; a: string }[];
+  const guides = getGuidesBySlugs(normalizedLocale, ['practical-pdf-workflows']);
 
   return (
     <>
@@ -60,6 +63,14 @@ export default async function PdfToImagePage({ params }: { params: Promise<{ loc
         ])}
       />
       <PdfTool mode="pdfToImage" />
+      <GuideRecommendationPanel
+        locale={normalizedLocale}
+        title={normalizedLocale === 'ar' ? 'متى تحوّل صفحات PDF إلى صور؟' : 'When should you export PDF pages as images?'}
+        intro={normalizedLocale === 'ar'
+          ? 'يوضح هذا الدليل الحالات التي يكون فيها التحويل إلى صور مفيداً للمعاينات أو العروض، ومتى يكون الاحتفاظ بـ PDF هو الأفضل.'
+          : 'This guide explains when image export is useful for previews or visual reuse, and when keeping the document as a PDF is still the better choice.'}
+        guides={guides}
+      />
     </>
   );
 }

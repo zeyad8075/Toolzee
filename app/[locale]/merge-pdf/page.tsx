@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import GuideRecommendationPanel from '@/components/content/GuideRecommendationPanel';
 import { getTranslations } from 'next-intl/server';
 import JsonLd from '@/components/seo/JsonLd';
 import PdfTool from '@/components/tools/PdfTool';
+import { getGuidesBySlugs } from '@/lib/guides';
 import { buildLocalizedMetadata } from '@/lib/metadata';
 import { buildBreadcrumbSchema, buildFaqSchema, buildToolSchema } from '@/lib/structured-data';
 
@@ -38,6 +40,7 @@ export default async function MergePdfPage({ params }: { params: Promise<{ local
   const page = pageContent[normalizedLocale];
   const t = await getTranslations({ locale: normalizedLocale, namespace: 'pdfTools.mergePdf' });
   const faqs = t.raw('faq') as { q: string; a: string }[];
+  const guides = getGuidesBySlugs(normalizedLocale, ['practical-pdf-workflows']);
 
   return (
     <>
@@ -60,6 +63,14 @@ export default async function MergePdfPage({ params }: { params: Promise<{ local
         ])}
       />
       <PdfTool mode="mergePdf" />
+      <GuideRecommendationPanel
+        locale={normalizedLocale}
+        title={normalizedLocale === 'ar' ? 'قبل دمج الملفات' : 'Before you merge PDF files'}
+        intro={normalizedLocale === 'ar'
+          ? 'يوضح هذا الدليل متى يكون الدمج مناسباً، وكيف ترتب الملفات قبل تكوين الحزمة النهائية، وما الأخطاء التي تستحق الانتباه.'
+          : 'This guide explains when merging is the right move, how to settle file order first, and what tradeoffs to watch for in the final packet.'}
+        guides={guides}
+      />
     </>
   );
 }

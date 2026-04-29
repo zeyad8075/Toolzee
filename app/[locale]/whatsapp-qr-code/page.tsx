@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import GuideRecommendationPanel from '@/components/content/GuideRecommendationPanel';
 import { getTranslations } from 'next-intl/server';
 import JsonLd from '@/components/seo/JsonLd';
 import SpecializedQRTool from '@/components/tools/SpecializedQRTool';
+import { getGuidesBySlugs } from '@/lib/guides';
 import { buildLocalizedMetadata } from '@/lib/metadata';
 import { buildBreadcrumbSchema, buildFaqSchema, buildToolSchema } from '@/lib/structured-data';
 
@@ -38,6 +40,7 @@ export default async function WhatsAppQRCodePage({ params }: { params: Promise<{
   const page = pageContent[normalizedLocale];
   const t = await getTranslations({ locale: normalizedLocale, namespace: 'qrSpecial.whatsapp' });
   const faqs = t.raw('faq') as { q: string; a: string }[];
+  const guides = getGuidesBySlugs(normalizedLocale, ['qr-code-best-practices']);
 
   return (
     <>
@@ -60,6 +63,14 @@ export default async function WhatsAppQRCodePage({ params }: { params: Promise<{
         ])}
       />
       <SpecializedQRTool variant="whatsapp" />
+      <GuideRecommendationPanel
+        locale={normalizedLocale}
+        title={normalizedLocale === 'ar' ? 'اجعل بدء المحادثة أسهل' : 'Make the chat-start flow easier'}
+        intro={normalizedLocale === 'ar'
+          ? 'يركز هذا الدليل على جعل رمز واتساب واضحاً وسهل المسح ومناسباً للسياق الذي سيظهر فيه، سواء في مطبوعات أو على الشاشة.'
+          : 'This guide focuses on making a WhatsApp QR code clear, scannable, and well matched to the real context where people will use it.'}
+        guides={guides}
+      />
     </>
   );
 }

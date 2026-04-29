@@ -80,6 +80,7 @@ export default function Footer({
               {t('company')}
             </h4>
             {[
+              { label: t('guides'), href: `/${locale}/guides` },
               { label: t('about'), href: `/${locale}/about` },
               { label: t('privacy'), href: `/${locale}/privacy` },
               { label: t('terms'), href: `/${locale}/terms` },

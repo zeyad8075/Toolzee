@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import GuideRecommendationPanel from '@/components/content/GuideRecommendationPanel';
 import { getTranslations } from 'next-intl/server';
 import JsonLd from '@/components/seo/JsonLd';
 import WordCounterTool from '@/components/tools/WordCounterTool';
+import { getGuidesBySlugs } from '@/lib/guides';
 import { buildLocalizedMetadata } from '@/lib/metadata';
 import { buildBreadcrumbSchema, buildFaqSchema, buildToolSchema } from '@/lib/structured-data';
 
@@ -38,6 +40,7 @@ export default async function WordCounterPage({ params }: { params: Promise<{ lo
   const page = pageContent[normalizedLocale];
   const t = await getTranslations({ locale: normalizedLocale, namespace: 'wordCounter' });
   const faqs = t.raw('faq') as { q: string; a: string }[];
+  const guides = getGuidesBySlugs(normalizedLocale, ['quick-text-checks-and-password-hygiene']);
 
   return (
     <>
@@ -60,6 +63,14 @@ export default async function WordCounterPage({ params }: { params: Promise<{ lo
         ])}
       />
       <WordCounterTool />
+      <GuideRecommendationPanel
+        locale={normalizedLocale}
+        title={normalizedLocale === 'ar' ? 'فهم الأرقام التي تراها' : 'Understand the numbers you see'}
+        intro={normalizedLocale === 'ar'
+          ? 'هذا الدليل يشرح كيف تستخدم عدد الكلمات والأحرف ووقت القراءة كمؤشرات عملية أثناء التحرير والنشر.'
+          : 'This guide explains how to use word count, character count, and reading-time estimates as practical signals while editing and publishing.'}
+        guides={guides}
+      />
     </>
   );
 }

@@ -26,6 +26,20 @@ const content = {
         ],
       },
       {
+        title: 'Public site information',
+        paragraphs: [
+          'Toolzee keeps public pages for contact information, terms of use, privacy details, and product explanations so visitors can evaluate the service before using the tools.',
+          'We aim for those pages, guides, and help sections to describe the live behavior of the site accurately rather than acting as placeholders.',
+        ],
+      },
+      {
+        title: 'What stays on your device',
+        paragraphs: [
+          'Browser-based processing is meant to reduce the amount of data that needs to leave your device for the core tools. That does not remove your responsibility to handle sensitive files carefully on the device you use.',
+          'If you share exported files, downloaded images, or copied passwords, that sharing happens under your control after the tool creates the output locally.',
+        ],
+      },
+      {
         title: 'Contact and updates',
         paragraphs: [
           'If you have a privacy question, you can contact us through the contact page on this site.',
@@ -54,6 +68,20 @@ const content = {
         paragraphs: [
           'عند تفعيل Google AdSense أو Google Analytics في Toolzee يمكنك اختيار الإعلانات المخصصة أو غير المخصصة أو عدم تحميل وسوم الإعلانات والقياس على هذا الجهاز قبل أن تبدأ بالعمل.',
           'إذا كانت منطقتك تتطلب منصة موافقة معتمدة لعرض الإعلانات، فقد نقوم بتقييد الإعلانات أو تعطيلها هناك إلى أن يتم استيفاء هذا المتطلب بالكامل.',
+        ],
+      },
+      {
+        title: 'المعلومات العامة في الموقع',
+        paragraphs: [
+          'يحافظ Toolzee على صفحات عامة للتواصل والشروط والخصوصية وشرح المنتج حتى يتمكن الزائر من تقييم الخدمة قبل استخدام الأدوات.',
+          'ونسعى إلى أن تصف هذه الصفحات والأدلة ونصوص المساعدة السلوك الفعلي للموقع بدقة بدلاً من أن تكون مجرد صفحات شكلية.',
+        ],
+      },
+      {
+        title: 'ما الذي يبقى على جهازك',
+        paragraphs: [
+          'تهدف المعالجة داخل المتصفح إلى تقليل مقدار البيانات التي تحتاج إلى مغادرة جهازك عند استخدام الأدوات الأساسية. لكن ذلك لا يلغي مسؤوليتك عن التعامل الحذر مع الملفات الحساسة على الجهاز الذي تستخدمه.',
+          'وعندما تشارك الملفات المصدّرة أو الصور التي تم تنزيلها أو كلمات المرور التي تم نسخها، فإن هذه المشاركة تتم تحت سيطرتك بعد إنشاء النتيجة محلياً.',
         ],
       },
       {

@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import GuideRecommendationPanel from '@/components/content/GuideRecommendationPanel';
 import { getTranslations } from 'next-intl/server';
 import JsonLd from '@/components/seo/JsonLd';
 import ConvertTool from './ConvertTool';
+import { getGuidesBySlugs } from '@/lib/guides';
 import { buildLocalizedMetadata } from '@/lib/metadata';
 import { buildBreadcrumbSchema, buildFaqSchema, buildToolSchema } from '@/lib/structured-data';
 
@@ -37,6 +39,7 @@ export default async function ConvertPage({ params }: { params: Promise<{ locale
   const page = pageContent[normalizedLocale];
   const t = await getTranslations({ locale: normalizedLocale, namespace: 'convert' });
   const faqs = t.raw('faq') as { q: string; a: string }[];
+  const guides = getGuidesBySlugs(normalizedLocale, ['choose-the-right-image-tool', 'prepare-images-for-web-email-and-pdf']);
 
   return (
     <>
@@ -59,6 +62,14 @@ export default async function ConvertPage({ params }: { params: Promise<{ locale
         ])}
       />
       <ConvertTool />
+      <GuideRecommendationPanel
+        locale={normalizedLocale}
+        title={normalizedLocale === 'ar' ? 'متى تحوّل الصورة ومتى تفعل شيئاً آخر؟' : 'When should you convert an image instead of doing something else?'}
+        intro={normalizedLocale === 'ar'
+          ? 'توضح هذه الأدلة الفرق بين التحويل والضغط وتغيير الحجم، وتساعدك على تجهيز الصور للويب والبريد وملفات PDF بشكل أنسب.'
+          : 'These guides break down the difference between conversion, compression, and resizing, then walk through practical image-prep decisions for web, email, and PDFs.'}
+        guides={guides}
+      />
     </>
   );
 }

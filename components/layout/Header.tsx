@@ -105,6 +105,7 @@ export default function Header({ locale, theme, onToggleTheme }: HeaderProps) {
               )}
             </div>
 
+            <NavLink href={`/${locale}/guides`}>{t('nav.guides')}</NavLink>
             <NavLink href={`/${locale}/about`}>{t('nav.about')}</NavLink>
           </nav>
 
@@ -162,6 +163,10 @@ export default function Header({ locale, theme, onToggleTheme }: HeaderProps) {
                 <ToolIcon name={tool.key} size={18} strokeWidth={2.1} style={{ flexShrink: 0 }} /> {t(`nav.${tool.key}`)}
               </Link>
             ))}
+            <Link href={`/${locale}/guides`} onClick={() => setMenuOpen(false)}
+              style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 4px', textDecoration: 'none', color: 'var(--text-2)', fontSize: 15, borderBottom: '1px solid var(--border)' }}>
+              <Info aria-hidden="true" size={18} /> {t('nav.guides')}
+            </Link>
             <Link href={`/${locale}/about`} onClick={() => setMenuOpen(false)}
               style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 4px', textDecoration: 'none', color: 'var(--text-2)', fontSize: 15 }}>
               <Info aria-hidden="true" size={18} /> {t('nav.about')}

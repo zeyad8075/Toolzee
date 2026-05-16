@@ -3,17 +3,22 @@ import {
   Archive,
   Contact,
   FileImage,
+  FileMinus2,
+  FileOutput,
   Files,
   Eraser,
   ImageDown,
   KeyRound,
   LetterText,
+  ListOrdered,
   MessageCircle,
   Minimize2,
   QrCode,
   RefreshCw,
+  RotateCw,
   Scaling,
   Scissors,
+  Stamp,
   Wifi,
   type LucideIcon,
 } from 'lucide-react';
@@ -29,6 +34,11 @@ export type ToolIconKey =
   | 'splitPdf'
   | 'compressPdf'
   | 'pdfToImage'
+  | 'rotatePdf'
+  | 'removePdfPages'
+  | 'extractPdfPages'
+  | 'addPageNumbers'
+  | 'addWatermark'
   | 'wordCounter'
   | 'passwordGenerator'
   | 'wifiQr'
@@ -46,6 +56,11 @@ const icons: Record<ToolIconKey, LucideIcon> = {
   splitPdf: Scissors,
   compressPdf: Archive,
   pdfToImage: ImageDown,
+  rotatePdf: RotateCw,
+  removePdfPages: FileMinus2,
+  extractPdfPages: FileOutput,
+  addPageNumbers: ListOrdered,
+  addWatermark: Stamp,
   wordCounter: LetterText,
   passwordGenerator: KeyRound,
   wifiQr: Wifi,

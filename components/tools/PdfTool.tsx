@@ -2,13 +2,22 @@
 
 import { useEffect, useState } from 'react';
 import JSZip from 'jszip';
-import { PDFDocument } from 'pdf-lib';
+import { degrees as pdfDegrees, PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { useTranslations } from 'next-intl';
 import DropZone from '@/components/tools/DropZone';
 import SupportNote from '@/components/content/SupportNote';
 import { trackAnalyticsEvent } from '@/lib/analytics';
 
-type PdfMode = 'mergePdf' | 'splitPdf' | 'compressPdf' | 'pdfToImage';
+type PdfMode =
+  | 'mergePdf'
+  | 'splitPdf'
+  | 'compressPdf'
+  | 'pdfToImage'
+  | 'rotatePdf'
+  | 'removePdfPages'
+  | 'extractPdfPages'
+  | 'addPageNumbers'
+  | 'addWatermark';
 
 interface PdfToolProps {
   mode: PdfMode;
@@ -33,6 +42,11 @@ const toolFileNames: Record<PdfMode, string> = {
   splitPdf: 'toolzee-pages.pdf',
   compressPdf: 'toolzee-compressed.pdf',
   pdfToImage: 'toolzee-pdf-images.zip',
+  rotatePdf: 'toolzee-rotated.pdf',
+  removePdfPages: 'toolzee-pages-removed.pdf',
+  extractPdfPages: 'toolzee-extracted-pages.pdf',
+  addPageNumbers: 'toolzee-numbered.pdf',
+  addWatermark: 'toolzee-watermarked.pdf',
 };
 
 function formatBytes(bytes: number) {
@@ -92,12 +106,12 @@ function parsePageRanges(input: string, pageCount: number) {
   return [...pages].sort((first, second) => first - second);
 }
 
-function canvasToBlob(canvas: HTMLCanvasElement, type = 'image/png'): Promise<Blob> {
+function canvasToBlob(canvas: HTMLCanvasElement, type = 'image/png', quality?: number): Promise<Blob> {
   return new Promise((resolve, reject) => {
     canvas.toBlob(blob => {
       if (blob) resolve(blob);
       else reject(new Error('canvasExportFailed'));
-    }, type);
+    }, type, quality);
   });
 }
 
@@ -137,7 +151,75 @@ async function splitPdfIntoZip(file: File, pageCount: number) {
   return zip.generateAsync({ type: 'blob' });
 }
 
-async function compressPdf(file: File) {
+async function removePdfPages(file: File, pageIndexes: number[], pageCount: number) {
+  const removeSet = new Set(pageIndexes);
+  const keepIndexes = Array.from({ length: pageCount }, (_, index) => index).filter(index => !removeSet.has(index));
+
+  if (!keepIndexes.length) throw new Error('invalidRange');
+  return extractPdfPages(file, keepIndexes);
+}
+
+async function rotatePdf(file: File, pageIndexes: number[], rotation: number) {
+  const source = await PDFDocument.load(await file.arrayBuffer(), { ignoreEncryption: true });
+  const rotateSet = new Set(pageIndexes);
+
+  source.getPages().forEach((page, index) => {
+    if (!rotateSet.has(index)) return;
+    const currentAngle = page.getRotation().angle;
+    page.setRotation(pdfDegrees((currentAngle + rotation + 360) % 360));
+  });
+
+  return blobFromBytes(await source.save({ useObjectStreams: true, addDefaultPage: false }), 'application/pdf');
+}
+
+async function addPageNumbers(file: File, position: 'bottom' | 'top') {
+  const source = await PDFDocument.load(await file.arrayBuffer(), { ignoreEncryption: true });
+  const font = await source.embedFont(StandardFonts.Helvetica);
+  const pages = source.getPages();
+  const fontSize = 10;
+
+  pages.forEach((page, index) => {
+    const { width, height } = page.getSize();
+    const text = `${index + 1} / ${pages.length}`;
+    const textWidth = font.widthOfTextAtSize(text, fontSize);
+    page.drawText(text, {
+      x: (width - textWidth) / 2,
+      y: position === 'top' ? height - 28 : 20,
+      size: fontSize,
+      font,
+      color: rgb(0.25, 0.25, 0.25),
+    });
+  });
+
+  return blobFromBytes(await source.save({ useObjectStreams: true, addDefaultPage: false }), 'application/pdf');
+}
+
+async function addWatermark(file: File, text: string) {
+  const normalizedText = text.trim();
+  if (!normalizedText) throw new Error('missingWatermark');
+
+  const source = await PDFDocument.load(await file.arrayBuffer(), { ignoreEncryption: true });
+  const font = await source.embedFont(StandardFonts.HelveticaBold);
+  const fontSize = 42;
+
+  source.getPages().forEach(page => {
+    const { width, height } = page.getSize();
+    const textWidth = font.widthOfTextAtSize(normalizedText, fontSize);
+    page.drawText(normalizedText, {
+      x: (width - textWidth) / 2,
+      y: height / 2,
+      size: fontSize,
+      font,
+      color: rgb(0.55, 0.55, 0.55),
+      opacity: 0.28,
+      rotate: pdfDegrees(-32),
+    });
+  });
+
+  return blobFromBytes(await source.save({ useObjectStreams: true, addDefaultPage: false }), 'application/pdf');
+}
+
+async function compactPdf(file: File) {
   const source = await PDFDocument.load(await file.arrayBuffer(), {
     ignoreEncryption: true,
     updateMetadata: false,
@@ -154,6 +236,74 @@ async function compressPdf(file: File) {
     }),
     'application/pdf',
   );
+}
+
+async function rasterizePdf(file: File, scale: number, quality: number) {
+  const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+    'pdfjs-dist/legacy/build/pdf.worker.mjs',
+    import.meta.url,
+  ).toString();
+
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const documentTask = pdfjs.getDocument({
+    data: bytes,
+    useWorkerFetch: false,
+    isEvalSupported: false,
+  });
+  const source = await documentTask.promise;
+  const output = await PDFDocument.create();
+
+  try {
+    for (let pageNumber = 1; pageNumber <= source.numPages; pageNumber += 1) {
+      const sourcePage = await source.getPage(pageNumber);
+      const baseViewport = sourcePage.getViewport({ scale: 1 });
+      const renderViewport = sourcePage.getViewport({ scale });
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.ceil(renderViewport.width);
+      canvas.height = Math.ceil(renderViewport.height);
+      const context = canvas.getContext('2d');
+
+      if (!context) throw new Error('canvasUnavailable');
+
+      context.fillStyle = '#ffffff';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+
+      await sourcePage.render({ canvas, canvasContext: context, viewport: renderViewport }).promise;
+
+      const pageImage = await canvasToBlob(canvas, 'image/jpeg', quality);
+      const image = await output.embedJpg(await pageImage.arrayBuffer());
+      const page = output.addPage([baseViewport.width, baseViewport.height]);
+      page.drawImage(image, {
+        x: 0,
+        y: 0,
+        width: baseViewport.width,
+        height: baseViewport.height,
+      });
+      sourcePage.cleanup();
+    }
+  } finally {
+    await source.destroy();
+  }
+
+  return blobFromBytes(await output.save({ useObjectStreams: true, addDefaultPage: false }), 'application/pdf');
+}
+
+async function compressPdf(file: File) {
+  const compact = await compactPdf(file);
+
+  try {
+    const balanced = await rasterizePdf(file, 1.15, 0.58);
+    if (balanced.size <= file.size * 0.5 || balanced.size < compact.size) return balanced;
+
+    const aggressive = await rasterizePdf(file, 0.85, 0.45);
+    if (aggressive.size < balanced.size && aggressive.size < compact.size) return aggressive;
+    if (balanced.size < compact.size) return balanced;
+  } catch {
+    return compact;
+  }
+
+  return compact;
 }
 
 async function pdfToImagesZip(file: File, scale: number) {
@@ -204,11 +354,19 @@ export default function PdfTool({ mode }: PdfToolProps) {
   const [pageCount, setPageCount] = useState(0);
   const [pageRange, setPageRange] = useState('');
   const [imageScale, setImageScale] = useState(1.6);
+  const [rotation, setRotation] = useState(90);
+  const [pageNumberPosition, setPageNumberPosition] = useState<'bottom' | 'top'>('bottom');
+  const [watermarkText, setWatermarkText] = useState('Toolzee');
   const [error, setError] = useState('');
 
   const singleFileMode = mode !== 'mergePdf';
   const selectedFile = items[0]?.file;
   const faqs = t.raw('faq') as { q: string; a: string }[];
+  const hasPageRange = mode === 'splitPdf'
+    || mode === 'removePdfPages'
+    || mode === 'extractPdfPages'
+    || mode === 'rotatePdf';
+  const needsPageCount = hasPageRange || mode === 'pdfToImage';
 
   useEffect(() => {
     return () => {
@@ -221,7 +379,7 @@ export default function PdfTool({ mode }: PdfToolProps) {
 
     async function inspectFile() {
       setPageCount(0);
-      if (!selectedFile || (mode !== 'splitPdf' && mode !== 'pdfToImage')) return;
+      if (!selectedFile || !needsPageCount) return;
 
       try {
         const count = await loadPdfPageCount(selectedFile);
@@ -235,7 +393,7 @@ export default function PdfTool({ mode }: PdfToolProps) {
     return () => {
       active = false;
     };
-  }, [common, mode, selectedFile]);
+  }, [common, needsPageCount, selectedFile]);
 
   function clearResult() {
     setResult(current => {
@@ -291,6 +449,21 @@ export default function PdfTool({ mode }: PdfToolProps) {
       } else if (mode === 'compressPdf') {
         if (!selectedFile) throw new Error('invalidPdf');
         output = await compressPdf(selectedFile);
+      } else if (mode === 'removePdfPages') {
+        if (!selectedFile || !pageCount) throw new Error('invalidPdf');
+        output = await removePdfPages(selectedFile, parsePageRanges(pageRange, pageCount), pageCount);
+      } else if (mode === 'extractPdfPages') {
+        if (!selectedFile || !pageCount) throw new Error('invalidPdf');
+        output = await extractPdfPages(selectedFile, parsePageRanges(pageRange, pageCount));
+      } else if (mode === 'rotatePdf') {
+        if (!selectedFile || !pageCount) throw new Error('invalidPdf');
+        output = await rotatePdf(selectedFile, parsePageRanges(pageRange, pageCount), rotation);
+      } else if (mode === 'addPageNumbers') {
+        if (!selectedFile) throw new Error('invalidPdf');
+        output = await addPageNumbers(selectedFile, pageNumberPosition);
+      } else if (mode === 'addWatermark') {
+        if (!selectedFile) throw new Error('invalidPdf');
+        output = await addWatermark(selectedFile, watermarkText);
       } else {
         if (!selectedFile) throw new Error('invalidPdf');
         output = await pdfToImagesZip(selectedFile, imageScale);
@@ -316,8 +489,9 @@ export default function PdfTool({ mode }: PdfToolProps) {
     trackAnalyticsEvent('download_result', { tool: mode, file_type: result.kind });
   }
 
-  const canProcess = mode === 'mergePdf' ? items.length >= 2 : Boolean(selectedFile);
+  const canProcess = mode === 'mergePdf' ? items.length >= 2 : Boolean(selectedFile) && (!needsPageCount || pageCount > 0);
   const savedBytes = selectedFile && result && mode === 'compressPdf' ? selectedFile.size - result.size : 0;
+  const savedPercent = selectedFile && savedBytes > 0 ? `${((savedBytes / selectedFile.size) * 100).toFixed(1)}%` : '0%';
 
   return (
     <div style={{ maxWidth: 960, margin: '0 auto', padding: '48px 24px' }}>
@@ -356,7 +530,7 @@ export default function PdfTool({ mode }: PdfToolProps) {
         </section>
       ) : null}
 
-      {mode === 'splitPdf' && selectedFile ? (
+      {hasPageRange && selectedFile ? (
         <section style={{ marginTop: 22, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: 18 }}>
           <div style={{ color: 'var(--text-2)', fontSize: 14, marginBottom: 12 }}>
             {pageCount ? t('pageCount', { count: pageCount }) : common('readingPdf')}
@@ -367,6 +541,50 @@ export default function PdfTool({ mode }: PdfToolProps) {
               value={pageRange}
               onChange={event => setPageRange(event.target.value)}
               placeholder={t('rangePlaceholder')}
+              style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', fontSize: 15 }}
+            />
+          </label>
+          {mode === 'rotatePdf' ? (
+            <label style={{ display: 'grid', gap: 8, fontWeight: 700, fontSize: 14, marginTop: 14 }}>
+              {t('rotationLabel')}
+              <select
+                value={rotation}
+                onChange={event => setRotation(Number(event.target.value))}
+                style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', fontSize: 15 }}
+              >
+                <option value={90}>{t('rotationOptions.right')}</option>
+                <option value={180}>{t('rotationOptions.flip')}</option>
+                <option value={270}>{t('rotationOptions.left')}</option>
+              </select>
+            </label>
+          ) : null}
+        </section>
+      ) : null}
+
+      {mode === 'addPageNumbers' && selectedFile ? (
+        <section style={{ marginTop: 22, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: 18 }}>
+          <label style={{ display: 'grid', gap: 8, fontWeight: 700, fontSize: 14 }}>
+            {t('positionLabel')}
+            <select
+              value={pageNumberPosition}
+              onChange={event => setPageNumberPosition(event.target.value as 'bottom' | 'top')}
+              style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', fontSize: 15 }}
+            >
+              <option value="bottom">{t('positionOptions.bottom')}</option>
+              <option value="top">{t('positionOptions.top')}</option>
+            </select>
+          </label>
+        </section>
+      ) : null}
+
+      {mode === 'addWatermark' && selectedFile ? (
+        <section style={{ marginTop: 22, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: 18 }}>
+          <label style={{ display: 'grid', gap: 8, fontWeight: 700, fontSize: 14 }}>
+            {t('watermarkLabel')}
+            <input
+              value={watermarkText}
+              onChange={event => setWatermarkText(event.target.value)}
+              placeholder={t('watermarkPlaceholder')}
               style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', fontSize: 15 }}
             />
           </label>
@@ -402,10 +620,10 @@ export default function PdfTool({ mode }: PdfToolProps) {
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 22 }}>
         {mode === 'splitPdf' ? (
           <>
-            <button type="button" className="btn-primary" onClick={() => run('extractRange')} disabled={!canProcess || processing || !pageCount} style={{ flex: 1, minWidth: 200, padding: '13px 18px', borderRadius: 12, border: 'none', fontWeight: 800, cursor: canProcess && !processing && pageCount ? 'pointer' : 'not-allowed', opacity: canProcess && !processing && pageCount ? 1 : 0.65 }}>
+            <button type="button" className="btn-primary" onClick={() => run('extractRange')} disabled={!canProcess || processing} style={{ flex: 1, minWidth: 200, padding: '13px 18px', borderRadius: 12, border: 'none', fontWeight: 800, cursor: canProcess && !processing ? 'pointer' : 'not-allowed', opacity: canProcess && !processing ? 1 : 0.65 }}>
               {processing ? common('processing') : t('extract')}
             </button>
-            <button type="button" className="btn-ghost" onClick={() => run('splitAll')} disabled={!canProcess || processing || !pageCount} style={{ flex: 1, minWidth: 200, padding: '13px 18px', borderRadius: 12, fontWeight: 800, cursor: canProcess && !processing && pageCount ? 'pointer' : 'not-allowed', opacity: canProcess && !processing && pageCount ? 1 : 0.65 }}>
+            <button type="button" className="btn-ghost" onClick={() => run('splitAll')} disabled={!canProcess || processing} style={{ flex: 1, minWidth: 200, padding: '13px 18px', borderRadius: 12, fontWeight: 800, cursor: canProcess && !processing ? 'pointer' : 'not-allowed', opacity: canProcess && !processing ? 1 : 0.65 }}>
               {t('splitAll')}
             </button>
           </>
@@ -424,6 +642,7 @@ export default function PdfTool({ mode }: PdfToolProps) {
           <Metric label={t('original')} value={formatBytes(selectedFile.size)} />
           <Metric label={t('optimized')} value={formatBytes(result.size)} />
           <Metric label={savedBytes >= 0 ? t('saved') : t('larger')} value={formatBytes(Math.abs(savedBytes))} />
+          <Metric label={t('reduction')} value={savedPercent} />
         </section>
       ) : null}
 

@@ -347,6 +347,8 @@
       "saved": "Saved",
       "larger": "Changed by",
       "reduction": "Reduction",
+      "variants": "Output versions",
+      "downloadVariant": "Download this version",
       "compressionTitle": "Choose compression level",
       "compressionHint": "Percentages are estimates. Text-heavy or already optimized PDFs may not reach the same reduction.",
       "currentSize": "Current size: {size}",

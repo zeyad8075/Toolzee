@@ -347,6 +347,8 @@
       "saved": "تم توفير",
       "larger": "التغير",
       "reduction": "نسبة التخفيض",
+      "variants": "النسخ الناتجة",
+      "downloadVariant": "تنزيل هذه النسخة",
       "compressionTitle": "اختر مستوى الضغط",
       "compressionHint": "النسب تقديرية. الملفات النصية أو المضغوطة مسبقاً قد لا تصل إلى نفس النسبة.",
       "currentSize": "الحجم الحالي: {size}",

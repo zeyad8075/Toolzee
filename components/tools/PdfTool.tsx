@@ -35,6 +35,11 @@ interface ResultFile {
   kind: 'pdf' | 'zip';
 }
 
+interface CompressionResult extends ResultFile {
+  preset: PdfCompressionPreset;
+  reduction: number;
+}
+
 interface PagePreview {
   pageNumber: number;
   url: string;
@@ -413,12 +418,12 @@ export default function PdfTool({ mode }: PdfToolProps) {
   const [items, setItems] = useState<PdfFileItem[]>([]);
   const [processing, setProcessing] = useState(false);
   const [result, setResult] = useState<ResultFile | null>(null);
+  const [compressionResults, setCompressionResults] = useState<CompressionResult[]>([]);
   const [pageCount, setPageCount] = useState(0);
   const [pagePreviews, setPagePreviews] = useState<PagePreview[]>([]);
   const [loadingPreviews, setLoadingPreviews] = useState(false);
   const [pageRange, setPageRange] = useState('');
   const [imageScale, setImageScale] = useState(1.6);
-  const [compressionPreset, setCompressionPreset] = useState<PdfCompressionPreset>('balanced');
   const [rotation, setRotation] = useState(90);
   const [pageNumberPosition, setPageNumberPosition] = useState<'bottom' | 'top'>('bottom');
   const [watermarkText, setWatermarkText] = useState('Toolzee');
@@ -449,6 +454,12 @@ export default function PdfTool({ mode }: PdfToolProps) {
       if (result) URL.revokeObjectURL(result.url);
     };
   }, [result]);
+
+  useEffect(() => {
+    return () => {
+      compressionResults.forEach(item => URL.revokeObjectURL(item.url));
+    };
+  }, [compressionResults]);
 
   useEffect(() => {
     return () => {
@@ -495,6 +506,10 @@ export default function PdfTool({ mode }: PdfToolProps) {
     setResult(current => {
       if (current) URL.revokeObjectURL(current.url);
       return null;
+    });
+    setCompressionResults(current => {
+      current.forEach(item => URL.revokeObjectURL(item.url));
+      return [];
     });
   }
 
@@ -568,7 +583,20 @@ export default function PdfTool({ mode }: PdfToolProps) {
         }
       } else if (mode === 'compressPdf') {
         if (!selectedFile) throw new Error('invalidPdf');
-        output = await compressPdf(selectedFile, compressionPreset);
+        const outputs: CompressionResult[] = [];
+
+        for (const preset of compressionPresetOrder) {
+          const blob = await compressPdf(selectedFile, preset);
+          outputs.push({
+            ...makeResult(blob, `toolzee-compressed-${preset}.pdf`, 'pdf'),
+            preset,
+            reduction: selectedFile.size > 0 ? Math.max(0, (1 - blob.size / selectedFile.size) * 100) : 0,
+          });
+        }
+
+        setCompressionResults(outputs);
+        trackAnalyticsEvent('process_pdf', { tool: mode, action, file_count: items.length, compression_outputs: outputs.length });
+        return;
       } else if (mode === 'removePdfPages') {
         if (!selectedFile || !pageCount) throw new Error('invalidPdf');
         output = await removePdfPages(selectedFile, parsePageRanges(pageRange, pageCount), pageCount);
@@ -592,7 +620,7 @@ export default function PdfTool({ mode }: PdfToolProps) {
 
       const nextResult = makeResult(output, fileName, kind);
       setResult(nextResult);
-      trackAnalyticsEvent('process_pdf', { tool: mode, action, file_count: items.length, compression_preset: mode === 'compressPdf' ? compressionPreset : undefined });
+      trackAnalyticsEvent('process_pdf', { tool: mode, action, file_count: items.length });
     } catch (caught) {
       const message = caught instanceof Error && caught.message === 'invalidRange'
         ? common('invalidRange')
@@ -609,9 +637,12 @@ export default function PdfTool({ mode }: PdfToolProps) {
     trackAnalyticsEvent('download_result', { tool: mode, file_type: result.kind });
   }
 
+  function downloadResult(file: ResultFile, preset?: PdfCompressionPreset) {
+    downloadUrl(file.url, file.fileName);
+    trackAnalyticsEvent('download_result', { tool: mode, file_type: file.kind, compression_preset: preset });
+  }
+
   const canProcess = mode === 'mergePdf' ? items.length >= 2 : Boolean(selectedFile) && (!needsPageCount || pageCount > 0);
-  const savedBytes = selectedFile && result && mode === 'compressPdf' ? selectedFile.size - result.size : 0;
-  const savedPercent = selectedFile && savedBytes > 0 ? `${((savedBytes / selectedFile.size) * 100).toFixed(1)}%` : '0%';
 
   return (
     <div style={{ maxWidth: 960, margin: '0 auto', padding: '48px 24px' }}>
@@ -657,55 +688,6 @@ export default function PdfTool({ mode }: PdfToolProps) {
               </button>
             </div>
           ))}
-        </section>
-      ) : null}
-
-      {mode === 'compressPdf' && selectedFile ? (
-        <section style={{ marginTop: 22, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: 18 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 14 }}>
-            <div>
-              <h2 style={{ fontSize: 18, fontWeight: 800, marginBottom: 4, fontFamily: 'var(--font-heading)' }}>{t('compressionTitle')}</h2>
-              <p style={{ color: 'var(--text-3)', fontSize: 13, lineHeight: 1.6 }}>{t('compressionHint')}</p>
-            </div>
-            <div style={{ color: 'var(--text-3)', fontSize: 13 }}>
-              {t('currentSize', { size: formatBytes(selectedFile.size) })}
-            </div>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 10 }}>
-            {compressionPresetOrder.map(preset => {
-              const options = compressionPresets[preset];
-              const selected = compressionPreset === preset;
-              const targetSize = selectedFile.size * (1 - options.reduction / 100);
-
-              return (
-                <button
-                  key={preset}
-                  type="button"
-                  onClick={() => {
-                    setCompressionPreset(preset);
-                    clearResult();
-                  }}
-                  aria-pressed={selected}
-                  style={{
-                    textAlign: 'start',
-                    borderRadius: 12,
-                    border: selected ? '2px solid var(--accent)' : '1px solid var(--border)',
-                    background: selected ? 'color-mix(in srgb, var(--accent) 10%, var(--surface))' : 'var(--bg)',
-                    color: 'var(--text)',
-                    padding: 14,
-                    cursor: 'pointer',
-                    display: 'grid',
-                    gap: 6,
-                  }}
-                >
-                  <span style={{ fontWeight: 900, fontSize: 14 }}>{t(`compressionOptions.${preset}.name`)}</span>
-                  <span style={{ color: 'var(--accent)', fontWeight: 900, fontSize: 20 }}>{options.reduction}%</span>
-                  <span style={{ color: 'var(--text-2)', fontSize: 12 }}>{t('targetSize', { size: formatBytes(targetSize) })}</span>
-                  <span style={{ color: 'var(--text-3)', fontSize: 12, lineHeight: 1.5 }}>{t(`compressionOptions.${preset}.desc`)}</span>
-                </button>
-              );
-            })}
-          </div>
         </section>
       ) : null}
 
@@ -893,12 +875,33 @@ export default function PdfTool({ mode }: PdfToolProps) {
         </button>
       </div>
 
-      {mode === 'compressPdf' && selectedFile && result ? (
-        <section style={{ marginTop: 18, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
-          <Metric label={t('original')} value={formatBytes(selectedFile.size)} />
-          <Metric label={t('optimized')} value={formatBytes(result.size)} />
-          <Metric label={savedBytes >= 0 ? t('saved') : t('larger')} value={formatBytes(Math.abs(savedBytes))} />
-          <Metric label={t('reduction')} value={savedPercent} />
+      {mode === 'compressPdf' && selectedFile && compressionResults.length ? (
+        <section style={{ marginTop: 18 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginBottom: 14 }}>
+            <Metric label={t('original')} value={formatBytes(selectedFile.size)} />
+            <Metric label={t('variants')} value={String(compressionResults.length)} />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 12 }}>
+            {compressionResults.map(item => {
+              const saved = selectedFile.size - item.size;
+              return (
+                <article key={item.preset} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: 16, display: 'grid', gap: 10 }}>
+                  <div>
+                    <h3 style={{ fontWeight: 900, fontSize: 15, marginBottom: 4 }}>{t(`compressionOptions.${item.preset}.name`)}</h3>
+                    <p style={{ color: 'var(--text-3)', fontSize: 12, lineHeight: 1.5 }}>{t(`compressionOptions.${item.preset}.desc`)}</p>
+                  </div>
+                  <div style={{ display: 'grid', gap: 6, color: 'var(--text-2)', fontSize: 13 }}>
+                    <div>{t('optimized')}: <strong style={{ color: 'var(--text)' }}>{formatBytes(item.size)}</strong></div>
+                    <div>{t('saved')}: <strong style={{ color: item.reduction > 0 ? 'var(--green)' : 'var(--text)' }}>{formatBytes(Math.max(0, saved))}</strong></div>
+                    <div>{t('reduction')}: <strong style={{ color: item.reduction > 0 ? 'var(--green)' : 'var(--text)' }}>{item.reduction.toFixed(1)}%</strong></div>
+                  </div>
+                  <button type="button" className="btn-primary" onClick={() => downloadResult(item, item.preset)} style={{ padding: '10px 14px', borderRadius: 10, border: 'none', fontWeight: 800, cursor: 'pointer' }}>
+                    {t('downloadVariant')}
+                  </button>
+                </article>
+              );
+            })}
+          </div>
         </section>
       ) : null}
 

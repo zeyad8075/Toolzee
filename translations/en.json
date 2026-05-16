@@ -282,6 +282,13 @@
       "download": "Download result",
       "downloadReady": "Download ({size})",
       "readingPdf": "Reading PDF pages...",
+      "previewTitle": "Page preview",
+      "previewHint": "Click pages to select them. The page range updates automatically.",
+      "visualPreviewHint": "Preview how the page effect will look before downloading.",
+      "previewLimited": "Showing first {count} pages",
+      "pageLabel": "Page {page}",
+      "pageShort": "Page {page}",
+      "selected": "Selected",
       "invalidPdf": "We could not read this PDF. Try another file.",
       "invalidRange": "Enter valid pages, like 1-3, 5.",
       "error": "We could not process this PDF. Encrypted or damaged PDFs may not work."

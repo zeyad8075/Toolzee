@@ -35,6 +35,11 @@ interface ResultFile {
   kind: 'pdf' | 'zip';
 }
 
+interface PagePreview {
+  pageNumber: number;
+  url: string;
+}
+
 const MAX_PDF_SIZE = 50 * 1024 * 1024;
 
 const toolFileNames: Record<PdfMode, string> = {
@@ -106,6 +111,10 @@ function parsePageRanges(input: string, pageCount: number) {
   return [...pages].sort((first, second) => first - second);
 }
 
+function formatPageIndexes(indexes: number[]) {
+  return indexes.map(index => String(index + 1)).join(', ');
+}
+
 function canvasToBlob(canvas: HTMLCanvasElement, type = 'image/png', quality?: number): Promise<Blob> {
   return new Promise((resolve, reject) => {
     canvas.toBlob(blob => {
@@ -118,6 +127,47 @@ function canvasToBlob(canvas: HTMLCanvasElement, type = 'image/png', quality?: n
 async function loadPdfPageCount(file: File) {
   const source = await PDFDocument.load(await file.arrayBuffer(), { ignoreEncryption: true });
   return source.getPageCount();
+}
+
+async function renderPdfPagePreviews(file: File, maxPages = 48) {
+  const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+    'pdfjs-dist/legacy/build/pdf.worker.mjs',
+    import.meta.url,
+  ).toString();
+
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const documentTask = pdfjs.getDocument({
+    data: bytes,
+    useWorkerFetch: false,
+    isEvalSupported: false,
+  });
+  const pdf = await documentTask.promise;
+  const previews: PagePreview[] = [];
+  const totalPages = pdf.numPages;
+  const count = Math.min(totalPages, maxPages);
+
+  try {
+    for (let pageNumber = 1; pageNumber <= count; pageNumber += 1) {
+      const page = await pdf.getPage(pageNumber);
+      const viewport = page.getViewport({ scale: 0.28 });
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.ceil(viewport.width);
+      canvas.height = Math.ceil(viewport.height);
+      const context = canvas.getContext('2d');
+
+      if (!context) throw new Error('canvasUnavailable');
+
+      await page.render({ canvas, canvasContext: context, viewport }).promise;
+      const blob = await canvasToBlob(canvas);
+      previews.push({ pageNumber, url: URL.createObjectURL(blob) });
+      page.cleanup();
+    }
+  } finally {
+    await pdf.destroy();
+  }
+
+  return { count: totalPages, previews };
 }
 
 async function mergePdfs(files: File[]) {
@@ -352,6 +402,8 @@ export default function PdfTool({ mode }: PdfToolProps) {
   const [processing, setProcessing] = useState(false);
   const [result, setResult] = useState<ResultFile | null>(null);
   const [pageCount, setPageCount] = useState(0);
+  const [pagePreviews, setPagePreviews] = useState<PagePreview[]>([]);
+  const [loadingPreviews, setLoadingPreviews] = useState(false);
   const [pageRange, setPageRange] = useState('');
   const [imageScale, setImageScale] = useState(1.6);
   const [rotation, setRotation] = useState(90);
@@ -366,7 +418,18 @@ export default function PdfTool({ mode }: PdfToolProps) {
     || mode === 'removePdfPages'
     || mode === 'extractPdfPages'
     || mode === 'rotatePdf';
-  const needsPageCount = hasPageRange || mode === 'pdfToImage';
+  const hasPagePreview = hasPageRange || mode === 'addPageNumbers' || mode === 'addWatermark';
+  const needsPageCount = hasPagePreview || mode === 'pdfToImage';
+  const selectedPageIndexes = (() => {
+    if (!pageCount) return [];
+    if (!pageRange.trim() && mode === 'rotatePdf') return Array.from({ length: pageCount }, (_, index) => index);
+    try {
+      return pageRange.trim() ? parsePageRanges(pageRange, pageCount) : [];
+    } catch {
+      return [];
+    }
+  })();
+  const selectedPageSet = new Set(selectedPageIndexes);
 
   useEffect(() => {
     return () => {
@@ -375,17 +438,37 @@ export default function PdfTool({ mode }: PdfToolProps) {
   }, [result]);
 
   useEffect(() => {
+    return () => {
+      pagePreviews.forEach(preview => URL.revokeObjectURL(preview.url));
+    };
+  }, [pagePreviews]);
+
+  useEffect(() => {
     let active = true;
 
     async function inspectFile() {
       setPageCount(0);
+      setPagePreviews([]);
       if (!selectedFile || !needsPageCount) return;
 
       try {
-        const count = await loadPdfPageCount(selectedFile);
-        if (active) setPageCount(count);
+        if (hasPagePreview) {
+          setLoadingPreviews(true);
+          const { count, previews } = await renderPdfPagePreviews(selectedFile);
+          if (active) {
+            setPageCount(count);
+            setPagePreviews(previews);
+          } else {
+            previews.forEach(preview => URL.revokeObjectURL(preview.url));
+          }
+        } else {
+          const count = await loadPdfPageCount(selectedFile);
+          if (active) setPageCount(count);
+        }
       } catch {
         if (active) setError(common('invalidPdf'));
+      } finally {
+        if (active) setLoadingPreviews(false);
       }
     }
 
@@ -393,7 +476,7 @@ export default function PdfTool({ mode }: PdfToolProps) {
     return () => {
       active = false;
     };
-  }, [common, needsPageCount, selectedFile]);
+  }, [common, hasPagePreview, needsPageCount, selectedFile]);
 
   function clearResult() {
     setResult(current => {
@@ -417,7 +500,20 @@ export default function PdfTool({ mode }: PdfToolProps) {
   function removeItem(id: string) {
     setItems(current => current.filter(item => item.id !== id));
     setPageCount(0);
+    setPagePreviews([]);
     setPageRange('');
+    setError('');
+    clearResult();
+  }
+
+  function togglePageSelection(pageIndex: number) {
+    if (!hasPageRange || !pageCount) return;
+
+    const pages = new Set(selectedPageIndexes);
+    if (pages.has(pageIndex)) pages.delete(pageIndex);
+    else pages.add(pageIndex);
+
+    setPageRange(formatPageIndexes([...pages].sort((first, second) => first - second)));
     setError('');
     clearResult();
   }
@@ -608,6 +704,83 @@ export default function PdfTool({ mode }: PdfToolProps) {
               <option value={2.2}>{t('qualityOptions.extra')}</option>
             </select>
           </label>
+        </section>
+      ) : null}
+
+      {hasPagePreview && selectedFile ? (
+        <section style={{ marginTop: 22 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'flex-end', flexWrap: 'wrap', marginBottom: 12 }}>
+            <div>
+              <h2 style={{ fontSize: 18, fontWeight: 800, marginBottom: 4, fontFamily: 'var(--font-heading)' }}>{common('previewTitle')}</h2>
+              <p style={{ color: 'var(--text-3)', fontSize: 13, lineHeight: 1.6 }}>
+                {hasPageRange ? common('previewHint') : common('visualPreviewHint')}
+              </p>
+            </div>
+            {pageCount > pagePreviews.length ? (
+              <div style={{ color: 'var(--text-3)', fontSize: 12 }}>
+                {common('previewLimited', { count: pagePreviews.length })}
+              </div>
+            ) : null}
+          </div>
+          {loadingPreviews ? (
+            <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: 18, color: 'var(--text-2)', fontSize: 14 }}>
+              {common('readingPdf')}
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(112px, 1fr))', gap: 12 }}>
+              {pagePreviews.map(preview => {
+                const pageIndex = preview.pageNumber - 1;
+                const selected = selectedPageSet.has(pageIndex);
+                const thumb = (
+                  <div style={{ position: 'relative', borderRadius: 10, background: 'var(--bg-2)', border: selected ? '2px solid var(--accent)' : '1px solid var(--border)', overflow: 'hidden', padding: 8, minHeight: 150 }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={preview.url}
+                      alt={common('pageLabel', { page: preview.pageNumber })}
+                      style={{
+                        width: '100%',
+                        height: 118,
+                        objectFit: 'contain',
+                        background: '#fff',
+                        borderRadius: 6,
+                        boxShadow: '0 8px 22px rgba(0,0,0,0.12)',
+                        transform: mode === 'rotatePdf' && selected ? `rotate(${rotation}deg)` : undefined,
+                        transition: 'transform 0.2s ease',
+                      }}
+                    />
+                    {mode === 'addPageNumbers' ? (
+                      <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', top: pageNumberPosition === 'top' ? 18 : 'auto', bottom: pageNumberPosition === 'bottom' ? 28 : 'auto', background: 'rgba(255,255,255,0.86)', color: '#111827', borderRadius: 999, padding: '2px 7px', fontSize: 10, fontWeight: 800 }}>
+                        {preview.pageNumber} / {pageCount}
+                      </span>
+                    ) : null}
+                    {mode === 'addWatermark' && watermarkText.trim() ? (
+                      <span style={{ position: 'absolute', left: '50%', top: '47%', transform: 'translate(-50%, -50%) rotate(-25deg)', color: 'rgba(17,24,39,0.38)', fontSize: 14, fontWeight: 900, textTransform: 'uppercase', maxWidth: '85%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {watermarkText}
+                      </span>
+                    ) : null}
+                    <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, color: selected ? 'var(--accent)' : 'var(--text-2)', fontSize: 12, fontWeight: 800 }}>
+                      <span>{common('pageShort', { page: preview.pageNumber })}</span>
+                      {hasPageRange && selected ? <span>{common('selected')}</span> : null}
+                    </div>
+                  </div>
+                );
+
+                return hasPageRange ? (
+                  <button
+                    key={preview.pageNumber}
+                    type="button"
+                    onClick={() => togglePageSelection(pageIndex)}
+                    aria-pressed={selected}
+                    style={{ border: 'none', background: 'transparent', padding: 0, textAlign: 'start', cursor: 'pointer' }}
+                  >
+                    {thumb}
+                  </button>
+                ) : (
+                  <div key={preview.pageNumber}>{thumb}</div>
+                );
+              })}
+            </div>
+          )}
         </section>
       ) : null}
 

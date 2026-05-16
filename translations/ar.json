@@ -282,6 +282,13 @@
       "download": "تنزيل النتيجة",
       "downloadReady": "تنزيل ({size})",
       "readingPdf": "جارٍ قراءة صفحات PDF...",
+      "previewTitle": "معاينة الصفحات",
+      "previewHint": "اضغط على الصفحات لاختيارها. سيتم تحديث نطاق الصفحات تلقائياً.",
+      "visualPreviewHint": "عاين شكل التأثير على الصفحات قبل التنزيل.",
+      "previewLimited": "يتم عرض أول {count} صفحة",
+      "pageLabel": "صفحة {page}",
+      "pageShort": "صفحة {page}",
+      "selected": "محددة",
       "invalidPdf": "تعذر قراءة ملف PDF. جرّب ملفاً آخر.",
       "invalidRange": "أدخل صفحات صحيحة مثل 1-3, 5.",
       "error": "تعذرت معالجة ملف PDF. قد لا تعمل الملفات المشفرة أو التالفة."

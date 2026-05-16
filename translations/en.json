@@ -255,6 +255,9 @@
     "download": "Download PDF",
     "processing": "Creating PDF...",
     "remove": "Remove",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "clear": "Clear images",
     "howTitle": "How to convert images to PDF",
     "howDesc": "Upload one or more images, keep them in the order you want, then create and download a single PDF file. The conversion runs in your browser.",
     "faqTitle": "Frequently Asked Questions",
@@ -289,6 +292,8 @@
       "pageLabel": "Page {page}",
       "pageShort": "Page {page}",
       "selected": "Selected",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
       "invalidPdf": "We could not read this PDF. Try another file.",
       "invalidRange": "Enter valid pages, like 1-3, 5.",
       "error": "We could not process this PDF. Encrypted or damaged PDFs may not work."
@@ -342,6 +347,28 @@
       "saved": "Saved",
       "larger": "Changed by",
       "reduction": "Reduction",
+      "compressionTitle": "Choose compression level",
+      "compressionHint": "Percentages are estimates. Text-heavy or already optimized PDFs may not reach the same reduction.",
+      "currentSize": "Current size: {size}",
+      "targetSize": "Estimated size: {size}",
+      "compressionOptions": {
+        "light": {
+          "name": "Light compression",
+          "desc": "Higher quality with a smaller size reduction."
+        },
+        "balanced": {
+          "name": "Balanced compression",
+          "desc": "A practical balance between quality and file size."
+        },
+        "strong": {
+          "name": "Strong compression",
+          "desc": "Smaller files with more visible quality reduction."
+        },
+        "maximum": {
+          "name": "Maximum compression",
+          "desc": "Smallest practical size for image-heavy PDFs."
+        }
+      },
       "howTitle": "How to compress a PDF",
       "howDesc": "Upload a PDF and Toolzee will try compact PDF saving first, then a stronger browser-based compression that redraws pages as JPEG images when it creates a smaller file.",
       "faqTitle": "Frequently Asked Questions",

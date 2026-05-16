@@ -163,6 +163,26 @@ export default function ImageToPdfTool() {
     setPdfUrl('');
   }
 
+  function moveItem(index: number, direction: -1 | 1) {
+    setItems(current => {
+      const target = index + direction;
+      if (target < 0 || target >= current.length) return current;
+      const next = [...current];
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+    setPdfUrl('');
+  }
+
+  function clearItems() {
+    setItems(current => {
+      current.forEach(item => URL.revokeObjectURL(item.preview));
+      return [];
+    });
+    if (pdfUrl) URL.revokeObjectURL(pdfUrl);
+    setPdfUrl('');
+  }
+
   async function convert() {
     if (!items.length) return;
     setProcessing(true);
@@ -210,6 +230,16 @@ export default function ImageToPdfTool() {
                 <div style={{ fontWeight: 800, fontSize: 14 }}>{index + 1}. {item.file.name}</div>
                 <div style={{ color: 'var(--text-3)', fontSize: 13 }}>{(item.file.size / 1024 / 1024).toFixed(2)} MB</div>
               </div>
+              {items.length > 1 ? (
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button type="button" className="btn-ghost" onClick={() => moveItem(index, -1)} disabled={index === 0} aria-label={t('moveUp')} style={{ width: 38, height: 38, borderRadius: 10, cursor: index === 0 ? 'not-allowed' : 'pointer', opacity: index === 0 ? 0.45 : 1, fontWeight: 900 }}>
+                    ↑
+                  </button>
+                  <button type="button" className="btn-ghost" onClick={() => moveItem(index, 1)} disabled={index === items.length - 1} aria-label={t('moveDown')} style={{ width: 38, height: 38, borderRadius: 10, cursor: index === items.length - 1 ? 'not-allowed' : 'pointer', opacity: index === items.length - 1 ? 0.45 : 1, fontWeight: 900 }}>
+                    ↓
+                  </button>
+                </div>
+              ) : null}
               <button type="button" className="btn-ghost" onClick={() => removeItem(item.id)} style={{ padding: '9px 14px', borderRadius: 10, cursor: 'pointer', fontWeight: 700 }}>
                 {t('remove')}
               </button>
@@ -224,6 +254,9 @@ export default function ImageToPdfTool() {
         </button>
         <button type="button" className="btn-ghost" onClick={download} disabled={!pdfUrl} style={{ flex: 1, minWidth: 200, padding: '13px 18px', borderRadius: 12, fontWeight: 800, cursor: pdfUrl ? 'pointer' : 'not-allowed', opacity: pdfUrl ? 1 : 0.65 }}>
           {t('download')}
+        </button>
+        <button type="button" className="btn-ghost" onClick={clearItems} disabled={!items.length} style={{ flex: 1, minWidth: 200, padding: '13px 18px', borderRadius: 12, fontWeight: 800, cursor: items.length ? 'pointer' : 'not-allowed', opacity: items.length ? 1 : 0.65 }}>
+          {t('clear')}
         </button>
       </div>
 

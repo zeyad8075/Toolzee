@@ -40,7 +40,22 @@ interface PagePreview {
   url: string;
 }
 
+type PdfCompressionPreset = 'light' | 'balanced' | 'strong' | 'maximum';
+
 const MAX_PDF_SIZE = 50 * 1024 * 1024;
+
+const compressionPresets: Record<PdfCompressionPreset, {
+  reduction: number;
+  scale: number;
+  quality: number;
+}> = {
+  light: { reduction: 25, scale: 1.35, quality: 0.72 },
+  balanced: { reduction: 50, scale: 1.15, quality: 0.58 },
+  strong: { reduction: 65, scale: 0.92, quality: 0.45 },
+  maximum: { reduction: 75, scale: 0.72, quality: 0.34 },
+};
+
+const compressionPresetOrder: PdfCompressionPreset[] = ['light', 'balanced', 'strong', 'maximum'];
 
 const toolFileNames: Record<PdfMode, string> = {
   mergePdf: 'toolzee-merged.pdf',
@@ -339,16 +354,13 @@ async function rasterizePdf(file: File, scale: number, quality: number) {
   return blobFromBytes(await output.save({ useObjectStreams: true, addDefaultPage: false }), 'application/pdf');
 }
 
-async function compressPdf(file: File) {
+async function compressPdf(file: File, preset: PdfCompressionPreset) {
   const compact = await compactPdf(file);
+  const options = compressionPresets[preset];
 
   try {
-    const balanced = await rasterizePdf(file, 1.15, 0.58);
-    if (balanced.size <= file.size * 0.5 || balanced.size < compact.size) return balanced;
-
-    const aggressive = await rasterizePdf(file, 0.85, 0.45);
-    if (aggressive.size < balanced.size && aggressive.size < compact.size) return aggressive;
-    if (balanced.size < compact.size) return balanced;
+    const compressed = await rasterizePdf(file, options.scale, options.quality);
+    if (compressed.size < compact.size) return compressed;
   } catch {
     return compact;
   }
@@ -406,6 +418,7 @@ export default function PdfTool({ mode }: PdfToolProps) {
   const [loadingPreviews, setLoadingPreviews] = useState(false);
   const [pageRange, setPageRange] = useState('');
   const [imageScale, setImageScale] = useState(1.6);
+  const [compressionPreset, setCompressionPreset] = useState<PdfCompressionPreset>('balanced');
   const [rotation, setRotation] = useState(90);
   const [pageNumberPosition, setPageNumberPosition] = useState<'bottom' | 'top'>('bottom');
   const [watermarkText, setWatermarkText] = useState('Toolzee');
@@ -418,8 +431,8 @@ export default function PdfTool({ mode }: PdfToolProps) {
     || mode === 'removePdfPages'
     || mode === 'extractPdfPages'
     || mode === 'rotatePdf';
-  const hasPagePreview = hasPageRange || mode === 'addPageNumbers' || mode === 'addWatermark';
-  const needsPageCount = hasPagePreview || mode === 'pdfToImage';
+  const hasPagePreview = hasPageRange || mode === 'pdfToImage' || mode === 'addPageNumbers' || mode === 'addWatermark';
+  const needsPageCount = hasPagePreview;
   const selectedPageIndexes = (() => {
     if (!pageCount) return [];
     if (!pageRange.trim() && mode === 'rotatePdf') return Array.from({ length: pageCount }, (_, index) => index);
@@ -506,6 +519,17 @@ export default function PdfTool({ mode }: PdfToolProps) {
     clearResult();
   }
 
+  function moveItem(index: number, direction: -1 | 1) {
+    setItems(current => {
+      const target = index + direction;
+      if (target < 0 || target >= current.length) return current;
+      const next = [...current];
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+    clearResult();
+  }
+
   function togglePageSelection(pageIndex: number) {
     if (!hasPageRange || !pageCount) return;
 
@@ -544,7 +568,7 @@ export default function PdfTool({ mode }: PdfToolProps) {
         }
       } else if (mode === 'compressPdf') {
         if (!selectedFile) throw new Error('invalidPdf');
-        output = await compressPdf(selectedFile);
+        output = await compressPdf(selectedFile, compressionPreset);
       } else if (mode === 'removePdfPages') {
         if (!selectedFile || !pageCount) throw new Error('invalidPdf');
         output = await removePdfPages(selectedFile, parsePageRanges(pageRange, pageCount), pageCount);
@@ -568,7 +592,7 @@ export default function PdfTool({ mode }: PdfToolProps) {
 
       const nextResult = makeResult(output, fileName, kind);
       setResult(nextResult);
-      trackAnalyticsEvent('process_pdf', { tool: mode, action, file_count: items.length });
+      trackAnalyticsEvent('process_pdf', { tool: mode, action, file_count: items.length, compression_preset: mode === 'compressPdf' ? compressionPreset : undefined });
     } catch (caught) {
       const message = caught instanceof Error && caught.message === 'invalidRange'
         ? common('invalidRange')
@@ -618,11 +642,70 @@ export default function PdfTool({ mode }: PdfToolProps) {
                 <div style={{ fontWeight: 800, fontSize: 14 }}>{index + 1}. {item.file.name}</div>
                 <div style={{ color: 'var(--text-3)', fontSize: 13 }}>{formatBytes(item.file.size)}</div>
               </div>
+              {mode === 'mergePdf' && items.length > 1 ? (
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button type="button" className="btn-ghost" onClick={() => moveItem(index, -1)} disabled={index === 0} aria-label={common('moveUp')} style={{ width: 38, height: 38, borderRadius: 10, cursor: index === 0 ? 'not-allowed' : 'pointer', opacity: index === 0 ? 0.45 : 1, fontWeight: 900 }}>
+                    ↑
+                  </button>
+                  <button type="button" className="btn-ghost" onClick={() => moveItem(index, 1)} disabled={index === items.length - 1} aria-label={common('moveDown')} style={{ width: 38, height: 38, borderRadius: 10, cursor: index === items.length - 1 ? 'not-allowed' : 'pointer', opacity: index === items.length - 1 ? 0.45 : 1, fontWeight: 900 }}>
+                    ↓
+                  </button>
+                </div>
+              ) : null}
               <button type="button" className="btn-ghost" onClick={() => removeItem(item.id)} style={{ padding: '9px 14px', borderRadius: 10, cursor: 'pointer', fontWeight: 700 }}>
                 {common('remove')}
               </button>
             </div>
           ))}
+        </section>
+      ) : null}
+
+      {mode === 'compressPdf' && selectedFile ? (
+        <section style={{ marginTop: 22, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: 18 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 14 }}>
+            <div>
+              <h2 style={{ fontSize: 18, fontWeight: 800, marginBottom: 4, fontFamily: 'var(--font-heading)' }}>{t('compressionTitle')}</h2>
+              <p style={{ color: 'var(--text-3)', fontSize: 13, lineHeight: 1.6 }}>{t('compressionHint')}</p>
+            </div>
+            <div style={{ color: 'var(--text-3)', fontSize: 13 }}>
+              {t('currentSize', { size: formatBytes(selectedFile.size) })}
+            </div>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 10 }}>
+            {compressionPresetOrder.map(preset => {
+              const options = compressionPresets[preset];
+              const selected = compressionPreset === preset;
+              const targetSize = selectedFile.size * (1 - options.reduction / 100);
+
+              return (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => {
+                    setCompressionPreset(preset);
+                    clearResult();
+                  }}
+                  aria-pressed={selected}
+                  style={{
+                    textAlign: 'start',
+                    borderRadius: 12,
+                    border: selected ? '2px solid var(--accent)' : '1px solid var(--border)',
+                    background: selected ? 'color-mix(in srgb, var(--accent) 10%, var(--surface))' : 'var(--bg)',
+                    color: 'var(--text)',
+                    padding: 14,
+                    cursor: 'pointer',
+                    display: 'grid',
+                    gap: 6,
+                  }}
+                >
+                  <span style={{ fontWeight: 900, fontSize: 14 }}>{t(`compressionOptions.${preset}.name`)}</span>
+                  <span style={{ color: 'var(--accent)', fontWeight: 900, fontSize: 20 }}>{options.reduction}%</span>
+                  <span style={{ color: 'var(--text-2)', fontSize: 12 }}>{t('targetSize', { size: formatBytes(targetSize) })}</span>
+                  <span style={{ color: 'var(--text-3)', fontSize: 12, lineHeight: 1.5 }}>{t(`compressionOptions.${preset}.desc`)}</span>
+                </button>
+              );
+            })}
+          </div>
         </section>
       ) : null}
 

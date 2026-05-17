@@ -356,11 +356,11 @@
       "compressionOptions": {
         "light": {
           "name": "Light compression",
-          "desc": "Higher quality with a smaller size reduction."
+          "desc": "Optimizes the PDF structure without turning pages into images."
         },
         "balanced": {
           "name": "Balanced compression",
-          "desc": "A practical balance between quality and file size."
+          "desc": "Higher resolution with a medium file size for reading and sharing."
         },
         "strong": {
           "name": "Strong compression",

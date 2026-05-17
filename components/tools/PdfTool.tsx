@@ -54,10 +54,10 @@ const compressionPresets: Record<PdfCompressionPreset, {
   scale: number;
   quality: number;
 }> = {
-  light: { reduction: 25, scale: 1.35, quality: 0.72 },
-  balanced: { reduction: 50, scale: 1.15, quality: 0.58 },
-  strong: { reduction: 65, scale: 0.92, quality: 0.45 },
-  maximum: { reduction: 75, scale: 0.72, quality: 0.34 },
+  light: { reduction: 10, scale: 1, quality: 1 },
+  balanced: { reduction: 40, scale: 2.4, quality: 0.86 },
+  strong: { reduction: 60, scale: 1.55, quality: 0.66 },
+  maximum: { reduction: 75, scale: 0.85, quality: 0.42 },
 };
 
 const compressionPresetOrder: PdfCompressionPreset[] = ['light', 'balanced', 'strong', 'maximum'];
@@ -361,6 +361,8 @@ async function rasterizePdf(file: File, scale: number, quality: number) {
 
 async function compressPdf(file: File, preset: PdfCompressionPreset) {
   const compact = await compactPdf(file);
+  if (preset === 'light') return compact;
+
   const options = compressionPresets[preset];
 
   try {

@@ -21,8 +21,7 @@ const content = {
       {
         title: 'Ads, analytics, consent, and third parties',
         paragraphs: [
-          'When Google AdSense or Google Analytics is enabled on Toolzee, the site may load the required Google script for setup and policy verification, while ad requests stay paused until you choose a privacy setting on this device.',
-          'You can choose between personalized ads, non-personalized ads, or keeping ad and measurement requests off for this device.',
+          'When Google AdSense or Google Analytics is enabled on Toolzee, you can choose between personalized ads, non-personalized ads, or no ad and measurement tags on this device before those tags begin loading.',
           'If your region requires a certified consent management platform for ad serving, we may limit or disable ads there until that requirement is fully in place.',
         ],
       },
@@ -67,8 +66,7 @@ const content = {
       {
         title: 'الإعلانات والتحليلات والموافقة والخدمات الخارجية',
         paragraphs: [
-          'عند تفعيل Google AdSense أو Google Analytics في Toolzee قد يحمّل الموقع سكربت Google المطلوب للإعداد والتحقق من السياسات، بينما تبقى طلبات الإعلانات متوقفة إلى أن تختار إعداد الخصوصية على هذا الجهاز.',
-          'يمكنك اختيار الإعلانات المخصصة أو غير المخصصة أو إبقاء طلبات الإعلانات والقياس متوقفة على هذا الجهاز.',
+          'عند تفعيل Google AdSense أو Google Analytics في Toolzee يمكنك اختيار الإعلانات المخصصة أو غير المخصصة أو عدم تحميل وسوم الإعلانات والقياس على هذا الجهاز قبل أن تبدأ بالعمل.',
           'إذا كانت منطقتك تتطلب منصة موافقة معتمدة لعرض الإعلانات، فقد نقوم بتقييد الإعلانات أو تعطيلها هناك إلى أن يتم استيفاء هذا المتطلب بالكامل.',
         ],
       },

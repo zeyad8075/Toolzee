@@ -17,7 +17,7 @@ const pageContent = {
     heading: 'Practical guides for everyday file and sharing tasks',
     intro: 'Toolzee includes free browser tools, but the site should still help you make better decisions before you click a button. These guides explain when to use each workflow, what tradeoffs to expect, and how to avoid the most common mistakes.',
     stats: [
-      { label: 'Original guides', value: '15' },
+      { label: 'Original guides', value: '5' },
       { label: 'Core categories', value: '4' },
       { label: 'Focused on', value: 'Practical workflows' },
     ],
@@ -32,7 +32,7 @@ const pageContent = {
     heading: 'أدلة عملية لمهام الملفات والمشاركة اليومية',
     intro: 'يوفر Toolzee أدوات مجانية داخل المتصفح، لكن الموقع يجب أن يساعدك أيضاً على اتخاذ قرار أفضل قبل استخدام الأداة. تشرح هذه الأدلة متى تستخدم كل مسار وما المقايضات المتوقعة وكيف تتجنب الأخطاء الأكثر شيوعاً.',
     stats: [
-      { label: 'أدلة أصلية', value: '15' },
+      { label: 'أدلة أصلية', value: '5' },
       { label: 'فئات أساسية', value: '4' },
       { label: 'التركيز', value: 'سير عمل عملي' },
     ],

@@ -700,7 +700,7 @@
     "manage": "Privacy settings",
     "eyebrow": "Privacy controls",
     "title": "Choose ad and measurement settings",
-    "body": "Toolzee keeps ad requests paused until you choose a privacy setting for this device. Pick personalized ads, non-personalized ads, or keep ads and measurement requests off.",
+    "body": "Toolzee can load Google ad and analytics tags only after you choose a privacy setting for this device. Pick personalized ads, non-personalized ads, or keep ads and measurement off.",
     "current": "Current choice",
     "personalized": "Personalized ads",
     "personalizedHint": "Allows ad and analytics tags with personalized advertising.",

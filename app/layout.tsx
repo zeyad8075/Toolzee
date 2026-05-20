@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Cairo, DM_Sans, Syne } from "next/font/google";
 import "./globals.css";
-import { getAdSenseClientId, isAdSenseConfigured } from "@/lib/ads";
 import { getGoogleSiteVerification, getSiteUrl, SITE_NAME } from "@/lib/site";
 
 const siteDescription = "Free browser-based tools for images, QR codes, text checks, passwords, and PDF tasks.";
@@ -47,34 +45,9 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const adSenseClientId = getAdSenseClientId();
-  const adSenseConfigured = isAdSenseConfigured(adSenseClientId);
-
   return (
     <html suppressHydrationWarning className={`${syne.variable} ${dmSans.variable} ${cairo.variable}`}>
-      <head>
-        {adSenseConfigured ? (
-          <>
-            <Script
-              id="toolzee-adsense-pause"
-              strategy="beforeInteractive"
-              dangerouslySetInnerHTML={{
-                __html: `
-                  window.adsbygoogle = window.adsbygoogle || [];
-                  window.adsbygoogle.pauseAdRequests = 1;
-                `,
-              }}
-            />
-            <Script
-              id="toolzee-adsense-script"
-              strategy="beforeInteractive"
-              async
-              crossOrigin="anonymous"
-              src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(adSenseClientId)}`}
-            />
-          </>
-        ) : null}
-      </head>
+      <head />
 
       <body>{children}</body>
     </html>
